@@ -15,10 +15,10 @@ create table if not exists usuario (
 	email varchar(200) not null unique,
 	contraseña varchar(100) not null,
 	fecha_nacimiento date not null,
+	rol enum('admin_sistema','manager','admin_empresa','comun') not null default 'comun',
 	numero char(8),
 	avatar varchar(200),
 	pais varchar(200),
-	rol enum('admin_sistema','manager','admin_empresa','comun'),
 	empresa_id int,
 	constraint fk_empresa foreign key (empresa_id) references empresa (empresa_id)
 );
