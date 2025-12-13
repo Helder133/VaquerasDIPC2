@@ -2,6 +2,10 @@ create database vaqueras_ipc2;
 
 use vaqueras_ipc2;
 
+CREATE USER 'vaqueras'@'localhost' IDENTIFIED BY 'Vaqueras22025*';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON Proyecto2.* TO 'vaqueras'@'localhost';
+
 create table if not exists empresa (
 	empresa_id int not null auto_increment primary key,
 	nombre varchar(200) not null,
@@ -16,7 +20,7 @@ create table if not exists usuario (
 	contraseña varchar(100) not null,
 	fecha_nacimiento date not null,
 	rol enum('admin_sistema','manager','admin_empresa','comun') not null default 'comun',
-	numero char(8),
+	telefono char(8),
 	avatar varchar(200),
 	pais varchar(200),
 	empresa_id int,
@@ -69,7 +73,9 @@ create table if not exists categoria (
 create table if not exists categoria_videojuego (
 	videojuego_id int not null,
 	categoria_id int not null,
-	constraint pk_categoria_videojuego primary key (videojuego_id, categoria_id)
+	constraint pk_categoria_videojuego primary key (videojuego_id, categoria_id),
+	constraint fk_videojuego2 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_categoria foreign key (categoria_id) references categoria (categoria_id)
 );
 
 create table if not exists comprar_videojuego (
@@ -77,7 +83,7 @@ create table if not exists comprar_videojuego (
 	usuario_id int not null,
 	fecha date,
 	constraint pk_comprar primary key (videojuego_id, usuario_id),
-	constraint fk_videojuego2 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_videojuego3 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario2 foreign key (usuario_id) references usuario (usuario_id)
 );
 
@@ -87,7 +93,7 @@ create table if not exists biblioteca_juego (
 	videojuego_id int not null,
 	fecha date not null,
 	estado_instalacion bool not null default 0,
-	constraint fk_videojuego3 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_videojuego4 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario3 foreign key (usuario_id) references usuario (usuario_id)
 );
 
@@ -99,7 +105,7 @@ create table if not exists comentario_videojuego (
 	visible bool not null default 1,
 	fecha_hora datetime not null,
 	comentario_padre int,
-	constraint fk_videojuego4 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_videojuego5 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario4 foreign key (usuario_id) references usuario (usuario_id)
 );
 
@@ -108,8 +114,7 @@ create table if not exists calificacion_videojuego (
 	usuario_id int not null,
 	videojuego_id int not null,
 	calificacion float not null,
-	descripcion varchar(250),
-	constraint fk_videojuego5 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_videojuego6 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario5 foreign key (usuario_id) references usuario (usuario_id)
 );
 
@@ -149,7 +154,7 @@ create table if not exists videojuego_prestado (
 	fecha_desinstalar date not null,
 	fecha_inicio date,
 	fecha_fin date,
-	constraint fk_videojuego6 foreign key (videojuego_id) references videojuego (videojuego_id),
+	constraint fk_videojuego7 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario9 foreign key (usuario_id) references usuario (usuario_id)
 );
 
