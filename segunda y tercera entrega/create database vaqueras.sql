@@ -4,7 +4,7 @@ use vaqueras_ipc2;
 
 CREATE USER 'vaqueras'@'localhost' IDENTIFIED BY 'Vaqueras22025*';
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON Proyecto2.* TO 'vaqueras'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON vaqueras_ipc2.* TO 'vaqueras'@'localhost';
 
 create table if not exists empresa (
 	empresa_id int not null auto_increment primary key,
