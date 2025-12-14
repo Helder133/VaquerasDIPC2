@@ -14,7 +14,8 @@ import java.time.LocalDate;
  *
  * @author helder
  */
-public class UsuarioRequest {
+public class UsuarioUpdate {
+    private int usuario_id;
     private String nombre;
     private String email;
     private String contraseña;
@@ -25,7 +26,15 @@ public class UsuarioRequest {
     private String telefono;
     private String avatar;
     private String pais;
-    private Integer empresa_id;
+    private int empresa_id;
+
+    public int getUsuario_id() {
+        return usuario_id;
+    }
+
+    public void setUsuario_id(int usuario_id) {
+        this.usuario_id = usuario_id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -91,12 +100,13 @@ public class UsuarioRequest {
         this.pais = pais;
     }
 
-    public Integer getEmpresa_id() {
+    public int getEmpresa_id() {
         return empresa_id;
     }
 
-    public void setEmpresa_id(Integer empresa_id) {
+    public void setEmpresa_id(int empresa_id) {
         this.empresa_id = empresa_id;
     }
+
     
 }

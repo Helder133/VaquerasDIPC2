@@ -4,18 +4,27 @@
  */
 package ipc2_vaquerad.vaquerasdipc2.db;
 
+import ipc2_vaquerad.vaquerasdipc2.models.usuario.Usuario;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
  * @author helder
  * @param <T>
  */
-public interface CRUD <T>{
-    public void insertar (T t);
-    public void actualizar (T t);
-    public List<T> seleccionar ();
-    public T seleccionarPorParametro (int t);
-    public T seleccionarPorParametro (String t);
-    public void eleiminar (int t);
+public interface CRUD<T> {
+
+    public void insertar(T t) throws SQLException;
+
+    public void actualizar(T t) throws SQLException;
+
+    public List<T> seleccionar() throws SQLException;
+
+    public Optional<Usuario> seleccionarPorParametro(int t) throws SQLException;
+
+    public List<T> seleccionarPorParametro(String t) throws SQLException;
+
+    public void eleiminar(int t) throws SQLException;
 }

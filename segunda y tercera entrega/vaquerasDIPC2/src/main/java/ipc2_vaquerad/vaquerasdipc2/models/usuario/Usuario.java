@@ -21,18 +21,18 @@ public class Usuario {
     private String contraseña;
     private LocalDate fecha_nacimiento;
     private EnumUsuario rol;
-    private String numero;
+    private String telefono;
     private String avatar;
     private String pais;
     private int empresa_id;
 
-    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String numero, String avatar, String pais, int empresa_id) {
+    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, String avatar, String pais, int empresa_id) {
         this.nombre = nombre;
         this.email = email;
         this.contraseña = incriptarContraseña(contraseña);
         this.fecha_nacimiento = fecha_nacimiento;
         this.rol = rol;
-        this.numero = numero;
+        this.telefono = telefono;
         this.avatar = avatar;
         this.pais = pais;
         this.empresa_id = empresa_id;
@@ -86,12 +86,12 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public String getNumero() {
-        return numero;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
     }
 
     public String getAvatar() {
