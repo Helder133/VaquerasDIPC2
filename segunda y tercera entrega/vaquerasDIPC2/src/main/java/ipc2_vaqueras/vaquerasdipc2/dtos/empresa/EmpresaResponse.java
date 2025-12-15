@@ -15,12 +15,14 @@ public class EmpresaResponse {
     private String nombre;
     private String descripcion;
     private float comision_negociada;
+    private boolean estado;
 
     public EmpresaResponse(Empresa empresa) {
         this.empresa_id = empresa.getEmpresa_id();
         this.nombre = empresa.getNombre();
         this.descripcion = empresa.getDescripcion();
         this.comision_negociada = empresa.getComision_negociada();
+        this.estado = empresa.isEstado();
     }
 
     public int getEmpresa_id() {
@@ -54,6 +56,13 @@ public class EmpresaResponse {
     public void setComision_negociada(float comision_negociada) {
         this.comision_negociada = comision_negociada;
     }
-    
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
     
 }

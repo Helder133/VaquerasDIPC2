@@ -153,7 +153,7 @@ public class EmpresaResource {
                     .build();
         }
     }
-
+    /*
     @DELETE
     @Path("{code}")
     public Response eliminarEmpresa(@PathParam("code") int code){
@@ -172,5 +172,5 @@ public class EmpresaResource {
                     .type(MediaType.APPLICATION_JSON)
                     .build();
         }
-    }
+    }*/
 }

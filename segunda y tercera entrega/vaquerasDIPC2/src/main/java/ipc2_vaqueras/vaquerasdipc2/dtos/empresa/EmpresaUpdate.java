@@ -12,7 +12,8 @@ public class EmpresaUpdate {
     private String nombre;
     private String descripcion;
     private float comision_negociada;
-
+    private boolean estado;
+    
     public String getNombre() {
         return nombre;
     }
@@ -35,6 +36,14 @@ public class EmpresaUpdate {
 
     public void setComision_negociada(float comision_negociada) {
         this.comision_negociada = comision_negociada;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
     
 }

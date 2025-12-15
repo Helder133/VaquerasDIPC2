@@ -15,11 +15,13 @@ public class Empresa {
     private String nombre;
     private String descripcion;
     private float comision_negociada;
+    private boolean estado;
 
     public Empresa(String nombre, String descripcion, float comision_negociada) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.comision_negociada = comision_negociada;
+        this.estado = true;
     }
 
     public int getEmpresa_id() {
@@ -57,6 +59,14 @@ public class Empresa {
     public boolean isValid () {
         return StringUtils.isNotBlank(nombre)
                 && StringUtils.isNotBlank(descripcion);
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
     }
     
 }

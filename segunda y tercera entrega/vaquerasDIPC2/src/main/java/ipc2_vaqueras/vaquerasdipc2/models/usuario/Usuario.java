@@ -26,7 +26,7 @@ public class Usuario {
     private String pais;
     private int empresa_id;
 
-    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, String avatar, String pais, int empresa_id) {
+    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, String avatar, String pais) {
         this.nombre = nombre;
         this.email = email;
         this.contraseña = incriptarContraseña(contraseña);
@@ -35,7 +35,6 @@ public class Usuario {
         this.telefono = telefono;
         this.avatar = avatar;
         this.pais = pais;
-        this.empresa_id = empresa_id;
     }
 
     public int getUsuario_id() {

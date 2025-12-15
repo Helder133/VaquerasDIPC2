@@ -9,7 +9,7 @@ package ipc2_vaqueras.vaquerasdipc2.models.usuario;
  * @author helder
  */
 public enum EnumUsuario {
-    admin_sistemas,
+    admin_sistema,
     manager,
     admin_empresa,
     comun

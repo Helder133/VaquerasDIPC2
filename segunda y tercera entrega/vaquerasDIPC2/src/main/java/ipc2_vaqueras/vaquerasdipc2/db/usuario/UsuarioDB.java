@@ -25,18 +25,20 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class UsuarioDB implements CRUD<Usuario> {
     //querys principales CRUD
-    private static final String INSERTAR_NUEVO_USUARIO = "INSERT INTO usuario (nombre, email, contraseña, fecha_nacimiento, rol, telefono, avatar, pais, empresa_id) VALUES (?,?,?,?,?,?,?,?,?)";
+    private static final String INSERTAR_NUEVO_USUARIO = "INSERT INTO usuario (nombre, email, contraseña, fecha_nacimiento, rol, telefono, avatar, pais) VALUES (?,?,?,?,?,?,?,?)";
     private static final String ACTUALIZAR_USUARIO_SIN_CONTRASEÑA = "UPDATE usuario SET nombre = ?, fecha_nacimiento = ?, telefono = ?, avatar = ?, pais = ? WHERE usuario_id = ?";
     private static final String ACTUALIZAR_USUARIO_CON_CONTRASEÑA = "UPDATE usuario SET nombre = ?, contraseña = ?, fecha_nacimiento = ?, telefono = ?, avatar = ?, pais = ? WHERE usuario_id = ?";
     private static final String SELECCIONAR_TODO_LOS_USUARIO = "SELECT * FROM usuario";
     private static final String SELECCIONAR_USUARIO_POR_INT = "SELECT * FROM usuario WHERE usuario_id = ?";
     private static final String SELECCIONAR_USUARIO_POR_STRING = "SELECT * FROM usuario WHERE nombre LIKE ?";
     private static final String ELIMINAR_USUARIO = "DELETE FROM usuario WHERE usuario_id = ?";
-
+    
     //querys auxiliares
     private static final String LOGIN = "SELECT * FROM usuario WHERE email = ? AND contraseña = ?";
     private static final String VALIDAR_EMAIL = "SELECT * FROM usuario WHERE email = ?";
-
+    private static final String VALIDAR_TELEFONO = "SELECT * FROM usuario WHERE telefono = ?";
+    private static final String VALIDAR_NUEVO_TELEFONO = "SELECT * FROM usuario WHERE telefono = ? AND usuario_id <> ?";
+    
     public Optional<Usuario> login(Login login) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement userlogin = connection.prepareStatement(LOGIN)) {
@@ -52,9 +54,9 @@ public class UsuarioDB implements CRUD<Usuario> {
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
                         resultSet.getString("avatar"),
-                        resultSet.getString("pais"),
-                        resultSet.getInt("empresa_id")
+                        resultSet.getString("pais")
                 );
+                usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
                 usuario.setUsuario_id(resultSet.getInt("Usuario_Id"));
 
                 return Optional.of(usuario);
@@ -77,9 +79,9 @@ public class UsuarioDB implements CRUD<Usuario> {
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
                         resultSet.getString("avatar"),
-                        resultSet.getString("pais"),
-                        resultSet.getInt("empresa_id")
+                        resultSet.getString("pais")
                 );
+                usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
                 usuario.setUsuario_id(resultSet.getInt("Usuario_Id"));
 
                 return Optional.of(usuario);
@@ -87,7 +89,26 @@ public class UsuarioDB implements CRUD<Usuario> {
         }
         return Optional.empty();
     }
-
+    
+    public boolean validarTelefono(String telefono) throws SQLException{
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_TELEFONO)){
+            validarTelefono.setString(1, telefono);
+            ResultSet resultSet = validarTelefono.executeQuery();
+            return resultSet.next();
+        }
+    }
+    
+    public boolean validarTelefonoNuevo(String telefono, int id) throws SQLException{
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_NUEVO_TELEFONO)){
+            validarTelefono.setString(1, telefono);
+            validarTelefono.setInt(2, id);
+            ResultSet resultSet = validarTelefono.executeQuery();
+            return resultSet.next();
+        }
+    }
+    
     @Override
     public void insertar(Usuario t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
@@ -100,7 +121,6 @@ public class UsuarioDB implements CRUD<Usuario> {
             insert.setString(6, t.getTelefono());
             insert.setString(7, t.getAvatar());
             insert.setString(8, t.getPais());
-            insert.setInt(9, t.getEmpresa_id());
 
             insert.executeUpdate();
         }
@@ -152,9 +172,9 @@ public class UsuarioDB implements CRUD<Usuario> {
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
                         resultSet.getString("avatar"),
-                        resultSet.getString("pais"),
-                        resultSet.getInt("empresa_id")
+                        resultSet.getString("pais")
                 );
+                usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 usuarios.add(usuario);
             }
@@ -178,9 +198,9 @@ public class UsuarioDB implements CRUD<Usuario> {
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
                         resultSet.getString("avatar"),
-                        resultSet.getString("pais"),
-                        resultSet.getInt("empresa_id")
+                        resultSet.getString("pais")
                 );
+                usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 return Optional.of(usuario);
             }
@@ -209,9 +229,9 @@ public class UsuarioDB implements CRUD<Usuario> {
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
                         resultSet.getString("avatar"),
-                        resultSet.getString("pais"),
-                        resultSet.getInt("empresa_id")
+                        resultSet.getString("pais")
                 );
+                usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 usuarios.add(usuario);
             }

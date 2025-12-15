@@ -28,6 +28,9 @@ public class UsuarioService {
         if (!usuarioDB.obtenerUsuarioPorEmail(usuario.getEmail()).isEmpty()) {
             throw new EntityAlreadyExistsException(String.format("El correo: %s, ya esta relacionado con otro usuario", usuario.getEmail()));
         }
+        if (usuarioDB.validarTelefono(usuario.getTelefono())) {
+            throw new EntityAlreadyExistsException(String.format("El telefono: %s, ya esta relacionado con otro usuario", usuario.getTelefono()));
+        }
         usuarioDB.insertar(usuario);
 
         if (usuario.getRol().equals(EnumUsuario.comun)) {
@@ -46,8 +49,7 @@ public class UsuarioService {
                     usuarioRequest.getRol(),
                     usuarioRequest.getTelefono(),
                     usuarioRequest.getAvatar(),
-                    usuarioRequest.getPais(),
-                    usuarioRequest.getEmpresa_id()
+                    usuarioRequest.getPais()
             );
             if (!usuario.isValid()) {
                 throw new UserDataInvalidException("Error en los datos enviados, vuelva a intentar");
@@ -58,10 +60,13 @@ public class UsuarioService {
         }
     }
 
-    public void editarUsuario(int id, UsuarioUpdate usuarioUpdate) throws UserDataInvalidException, SQLException {
+    public void editarUsuario(int id, UsuarioUpdate usuarioUpdate) throws UserDataInvalidException, SQLException, EntityAlreadyExistsException {
         Usuario usuario = extraerUsuario(usuarioUpdate);
         usuario.setUsuario_id(id);
         UsuarioDB usuarioDB = new UsuarioDB();
+        if (usuarioDB.validarTelefonoNuevo(usuario.getTelefono(), id)) {
+            throw new EntityAlreadyExistsException(String.format("El telefono: %s, ya esta relacionado con otro usuario", usuario.getTelefono()));
+        }
         usuarioDB.actualizar(usuario);
     }
 
@@ -75,8 +80,7 @@ public class UsuarioService {
                     null,
                     usuarioUpdate.getTelefono(),
                     usuarioUpdate.getAvatar(),
-                    usuarioUpdate.getPais(),
-                    0
+                    usuarioUpdate.getPais()
             );
             if (ValidarDatosAActualizar(usuario)) {
                 throw new UserDataInvalidException("Error en los datos enviados, vuelva a intentar");
@@ -88,23 +92,23 @@ public class UsuarioService {
     }
 
     private boolean ValidarDatosAActualizar(Usuario usuario) {
-        return StringUtils.isBlank(usuario.getNombre()) 
+        return StringUtils.isBlank(usuario.getNombre())
                 && StringUtils.isBlank(usuario.getTelefono())
                 && StringUtils.isBlank(usuario.getAvatar())
                 && StringUtils.isBlank(usuario.getPais())
                 && usuario.getFecha_nacimiento() != null;
     }
-    
+
     public Optional<Usuario> existsEmail(String email) throws SQLException {
         UsuarioDB usuarioDB = new UsuarioDB();
         return usuarioDB.obtenerUsuarioPorEmail(email);
     }
-    
+
     public List<Usuario> seleccionarTodosLosUsuarios() throws SQLException {
         UsuarioDB usuarioDB = new UsuarioDB();
         return usuarioDB.seleccionar();
     }
-    
+
     public Usuario seleccionarUsuarioPorParametro(int code) throws SQLException, UserDataInvalidException {
         UsuarioDB usuarioDB = new UsuarioDB();
         Optional<Usuario> usuarioOpt = usuarioDB.seleccionarPorParametro(code);
@@ -118,7 +122,7 @@ public class UsuarioService {
         UsuarioDB usuarioDB = new UsuarioDB();
         return usuarioDB.seleccionarPorParametro(code);
     }
-    
+
     public void eliminarUsuario(int code) throws SQLException, EntityAlreadyExistsException {
         UsuarioDB usuarioDB = new UsuarioDB();
         Optional<Usuario> usuarioOpt = usuarioDB.seleccionarPorParametro(code);

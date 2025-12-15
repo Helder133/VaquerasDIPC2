@@ -25,7 +25,6 @@ public class UsuarioRequest {
     private String telefono;
     private String avatar;
     private String pais;
-    private Integer empresa_id;
 
     public String getNombre() {
         return nombre;
@@ -89,14 +88,6 @@ public class UsuarioRequest {
 
     public void setPais(String pais) {
         this.pais = pais;
-    }
-
-    public Integer getEmpresa_id() {
-        return empresa_id;
-    }
-
-    public void setEmpresa_id(Integer empresa_id) {
-        this.empresa_id = empresa_id;
     }
     
 }

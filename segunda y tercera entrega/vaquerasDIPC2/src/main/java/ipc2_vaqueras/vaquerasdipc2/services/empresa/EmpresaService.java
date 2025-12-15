@@ -64,6 +64,7 @@ public class EmpresaService {
                     empresaUpdate.getDescripcion(),
                     empresaUpdate.getComision_negociada()
             );
+            empresa.setEstado(empresaUpdate.isEstado());
             if (!empresa.isValid()) {
                 throw new UserDataInvalidException("Error en los datos enviados, vuelva a intentar");
             }

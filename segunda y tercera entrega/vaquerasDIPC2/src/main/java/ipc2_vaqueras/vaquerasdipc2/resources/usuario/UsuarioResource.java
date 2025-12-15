@@ -145,6 +145,11 @@ public class UsuarioResource {
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+        } catch (EntityAlreadyExistsException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
     }
     

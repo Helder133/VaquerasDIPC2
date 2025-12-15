@@ -19,11 +19,11 @@ import java.util.Optional;
  *
  * @author helder
  */
-public class EmpresaDB implements CRUD<Empresa> {
+public class EmpresaDB   implements CRUD<Empresa> {
 
     //querys principales
-    private static final String INSERTAR_NUEVA_EMPRESA = "INSERT INTO empresa (nombre, descripcion, comision_negociada) VALUES (?,?,?)";
-    private static final String ACTUALIZAR_EMPRESA = "UPDATE empresa SET nombre = ?, descripcion = ?, comision_negociada = ? WHERE empresa_id = ?";
+    private static final String INSERTAR_NUEVA_EMPRESA = "INSERT INTO empresa (nombre, descripcion, comision_negociada, estado) VALUES (?,?,?,?)";
+    private static final String ACTUALIZAR_EMPRESA = "UPDATE empresa SET nombre = ?, descripcion = ?, comision_negociada = ?, estado = ? WHERE empresa_id = ?";
     private static final String SELECCIONAR_TODAS_LAS_EMPRESAS = "SELECT * FROM empresa";
     private static final String SELECCIONAR_EMPRESA_POR_INT = "SELECT * FROM empresa WHERE empresa_id = ?";
     private static final String SELECCIONAR_EMPRESA_POR_STRING = "SELECT * FROM empresa WHERE nombre like ?";
@@ -59,6 +59,7 @@ public class EmpresaDB implements CRUD<Empresa> {
             insert.setString(1, t.getNombre());
             insert.setString(2, t.getDescripcion());
             insert.setFloat(3, t.getComision_negociada());
+            insert.setBoolean(4, t.isEstado());
 
             insert.executeUpdate();
         }
@@ -71,6 +72,9 @@ public class EmpresaDB implements CRUD<Empresa> {
             update.setString(1, t.getNombre());
             update.setString(2, t.getDescripcion());
             update.setFloat(3, t.getComision_negociada());
+            update.setInt(4, t.getEmpresa_id());
+            update.setBoolean(5, t.isEstado());
+            
             update.executeUpdate();
         }
     }
@@ -91,6 +95,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getString("descripcion"),
                         resultSet.getFloat("comision_negociada")
                 );
+                empresa.setEstado(resultSet.getBoolean("estado"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 empresas.add(empresa);
             }
@@ -111,6 +116,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getString("descripcion"),
                         resultSet.getFloat("comision_negociada")
                 );
+                empresa.setEstado(resultSet.getBoolean("estado"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 return Optional.of(empresa);
             }
@@ -136,6 +142,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getString("descripcion"),
                         resultSet.getFloat("comision_negociada")
                 );
+                empresa.setEstado(resultSet.getBoolean("estado"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 empresas.add(empresa);
             }
@@ -145,10 +152,14 @@ public class EmpresaDB implements CRUD<Empresa> {
 
     @Override
     public void eleiminar(int t) throws SQLException {
+        /*
+        *No se puede eliminar una empresa ya que lo juegos tampo se pueden eliminar, en vez de eso, mejor se tiene una bansera
+        *que indica si la empresa sigue desarrolando videojuego o ya no esta desarrollando videojugo
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement delete = connection.prepareStatement(ELIMINAR_EMPRESA)) {
             delete.setInt(1, t);
             delete.executeUpdate();
         }
+        */
     }
 }
