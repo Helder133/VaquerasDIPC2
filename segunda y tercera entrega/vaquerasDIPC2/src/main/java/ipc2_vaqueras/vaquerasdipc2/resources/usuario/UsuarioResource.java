@@ -4,11 +4,15 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.resources.usuario;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
+import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.UsuarioService;
 import jakarta.ws.rs.core.Context;
@@ -23,8 +27,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.InputStream;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  * REST Web Service
@@ -36,7 +44,7 @@ public class UsuarioResource {
 
     @Context
     UriInfo context;
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response obtenerTodosLosUsuarios() {
@@ -54,7 +62,7 @@ public class UsuarioResource {
                     .build();
         }
     }
-    
+
     @GET
     @Path("{code}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,7 +87,7 @@ public class UsuarioResource {
                     .build();
         }
     }
-    
+
     private Response getUserString(String code) {
         List<UsuarioResponse> usuarios;
         UsuarioService usuarioService = new UsuarioService();
@@ -101,12 +109,33 @@ public class UsuarioResource {
                     .build();
         }
     }
-    
+
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response nuevoUsuario(UsuarioRequest usuarioRequest) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response nuevoUsuario(@FormDataParam("nombre") String nombre,
+            @FormDataParam("email") String email,
+            @FormDataParam("contraseña") String contraseña,
+            @JsonFormat(pattern = "yyyy-MM-dd")
+            @JsonDeserialize(using = LocalDateDeserializer.class)
+            @FormDataParam("fecha_nacimiento") LocalDate fecha_nacimiento,
+            @FormDataParam("rol") EnumUsuario rol,
+            @FormDataParam("telefono") String telefono,
+            @FormDataParam("avatar") InputStream avatarInput,
+            @FormDataParam("avatar") FormDataContentDisposition fileDetai,
+            @FormDataParam("pais") String pais) {
         try {
             UsuarioService usuarioService = new UsuarioService();
+            UsuarioRequest usuarioRequest = new UsuarioRequest();
+            
+            usuarioRequest.setNombre(nombre);
+            usuarioRequest.setEmail(email);
+            usuarioRequest.setContraseña(contraseña);
+            usuarioRequest.setFecha_nacimiento(fecha_nacimiento);
+            usuarioRequest.setRol(rol);
+            usuarioRequest.setTelefono(telefono);
+            usuarioRequest.setAvatar("avatar");
+            usuarioRequest.setPais(pais);
+            
             usuarioService.crearUsuario(usuarioRequest);
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
@@ -126,7 +155,7 @@ public class UsuarioResource {
                     .build();
         }
     }
-    
+
     @PUT
     @Path("{code}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -152,10 +181,10 @@ public class UsuarioResource {
                     .build();
         }
     }
-    
+
     @DELETE
     @Path("{code}")
-    public Response deleteUser(@PathParam("code") int code){
+    public Response deleteUser(@PathParam("code") int code) {
         try {
             UsuarioService usuarioService = new UsuarioService();
             usuarioService.eliminarUsuario(code);
