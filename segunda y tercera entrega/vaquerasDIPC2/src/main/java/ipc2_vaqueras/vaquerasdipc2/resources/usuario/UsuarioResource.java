@@ -7,6 +7,7 @@ package ipc2_vaqueras.vaquerasdipc2.resources.usuario;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import ipc2_vaqueras.vaquerasdipc2.archivo.Archivo;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
@@ -27,6 +28,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -121,11 +123,13 @@ public class UsuarioResource {
             @FormDataParam("rol") EnumUsuario rol,
             @FormDataParam("telefono") String telefono,
             @FormDataParam("avatar") InputStream avatarInput,
-            @FormDataParam("avatar") FormDataContentDisposition fileDetai,
+            @FormDataParam("avatar") FormDataContentDisposition fileDetail,
             @FormDataParam("pais") String pais) {
+        UsuarioService usuarioService = new UsuarioService();
+        UsuarioRequest usuarioRequest = new UsuarioRequest();
+        String rutaFoto = null;
         try {
-            UsuarioService usuarioService = new UsuarioService();
-            UsuarioRequest usuarioRequest = new UsuarioRequest();
+            rutaFoto = guardarAvatar(avatarInput, fileDetail, "usuario");
             
             usuarioRequest.setNombre(nombre);
             usuarioRequest.setEmail(email);
@@ -133,9 +137,9 @@ public class UsuarioResource {
             usuarioRequest.setFecha_nacimiento(fecha_nacimiento);
             usuarioRequest.setRol(rol);
             usuarioRequest.setTelefono(telefono);
-            usuarioRequest.setAvatar("avatar");
+            usuarioRequest.setAvatar(rutaFoto);
             usuarioRequest.setPais(pais);
-            
+
             usuarioService.crearUsuario(usuarioRequest);
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
@@ -153,7 +157,25 @@ public class UsuarioResource {
                     .entity("{\"error\": \"" + e.getMessage() + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+        } catch (IOException e) {
+            // Borrar foto si falla el registro  
+            Archivo archivo = new Archivo();
+            if (rutaFoto != null) {
+                archivo.eliminarArchivo(rutaFoto);
+            }
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
         }
+    }
+
+    private String guardarAvatar(InputStream avatarInput, FormDataContentDisposition fileDetai, String subFolder) throws IOException {
+        if (avatarInput != null && fileDetai != null) {
+            Archivo archivo = new Archivo();
+            return archivo.guardarArchivo(avatarInput, fileDetai.getFileName(), subFolder);
+        }
+        return null;
     }
 
     @PUT
