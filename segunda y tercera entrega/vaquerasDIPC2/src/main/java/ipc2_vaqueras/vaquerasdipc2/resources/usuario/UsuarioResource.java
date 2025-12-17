@@ -4,9 +4,6 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.resources.usuario;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import ipc2_vaqueras.vaquerasdipc2.archivo.Archivo;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
@@ -58,17 +55,14 @@ public class UsuarioResource {
                     .toList();
             return Response.ok(usuarios).build();
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
 
     @GET
     @Path("{code}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserByInt(@PathParam("code") String code) {
+    public Response obtenerUsuarioPorId(@PathParam("code") String code) {
         UsuarioService usuarioService = new UsuarioService();
         try {
             int code1 = Integer.parseInt(code);
@@ -76,21 +70,17 @@ public class UsuarioResource {
             Usuario existingUser = usuarioService.seleccionarUsuarioPorParametro(code1);
             return Response.ok(new UsuarioResponse(existingUser)).build();
         } catch (NumberFormatException e) {
-            return getUserString(code);
-        } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return obtenerUsuariosPorString(code);
+            
         } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        }
+            return errorEjecucion(e.getMessage(), 1);
+            
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        } 
     }
 
-    private Response getUserString(String code) {
+    private Response obtenerUsuariosPorString(String code) {
         List<UsuarioResponse> usuarios;
         UsuarioService usuarioService = new UsuarioService();
         try {
@@ -99,27 +89,20 @@ public class UsuarioResource {
                     .map(UsuarioResponse::new)
                     .toList();
             return Response.ok(usuarios).build();
-        } catch (SQLException ex) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + ex.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (UserDataInvalidException ex) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + ex.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        }
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+            
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        } 
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response nuevoUsuario(@FormDataParam("nombre") String nombre,
             @FormDataParam("email") String email,
-            @FormDataParam("contraseña") String contraseña,
-            @JsonFormat(pattern = "yyyy-MM-dd")
-            @JsonDeserialize(using = LocalDateDeserializer.class)
-            @FormDataParam("fecha_nacimiento") LocalDate fecha_nacimiento,
+            @FormDataParam("password") String contraseña,
+            @FormDataParam("fecha_nacimiento") String fecha_nacimiento,
             @FormDataParam("rol") EnumUsuario rol,
             @FormDataParam("telefono") String telefono,
             @FormDataParam("avatar") InputStream avatarInput,
@@ -130,11 +113,11 @@ public class UsuarioResource {
         String rutaFoto = null;
         try {
             rutaFoto = guardarAvatar(avatarInput, fileDetail, "usuario");
-            
+
             usuarioRequest.setNombre(nombre);
             usuarioRequest.setEmail(email);
             usuarioRequest.setContraseña(contraseña);
-            usuarioRequest.setFecha_nacimiento(fecha_nacimiento);
+            usuarioRequest.setFecha_nacimiento(LocalDate.parse(fecha_nacimiento));
             usuarioRequest.setRol(rol);
             usuarioRequest.setTelefono(telefono);
             usuarioRequest.setAvatar(rutaFoto);
@@ -142,31 +125,28 @@ public class UsuarioResource {
 
             usuarioService.crearUsuario(usuarioRequest);
             return Response.ok().build();
-        } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (IOException e) {
+        } catch (UserDataInvalidException | IOException e) {
             // Borrar foto si falla el registro  
-            Archivo archivo = new Archivo();
-            if (rutaFoto != null) {
-                archivo.eliminarArchivo(rutaFoto);
-            }
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 1);
+            
+        } catch (EntityAlreadyExistsException e) {
+            // Borrar foto si falla el registro  
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 2);
+            
+        } catch (SQLException e) {
+            // Borrar foto si falla el registro  
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 3);
+        }
+
+    }
+
+    private void eliminarFoto(String rutaFoto) {
+        Archivo archivo = new Archivo();
+        if (rutaFoto != null) {
+            archivo.eliminarArchivo(rutaFoto);
         }
     }
 
@@ -180,28 +160,45 @@ public class UsuarioResource {
 
     @PUT
     @Path("{code}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("code") int code, UsuarioUpdate usuarioUpdate) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response updateUser(@PathParam("code") int code,
+            @FormDataParam("nombre") String nombre,
+            @FormDataParam("password") String contraseña,
+            @FormDataParam("fecha_nacimiento") String fecha_nacimiento,
+            @FormDataParam("telefono") String telefono,
+            @FormDataParam("avatar") InputStream avatarInput,
+            @FormDataParam("avatar") FormDataContentDisposition fileDetail,
+            @FormDataParam("pais") String pais) {
+        UsuarioService usuarioService = new UsuarioService();
+        UsuarioUpdate usuarioUpdate = new UsuarioUpdate();
+        String rutaFoto = null;
         try {
-            UsuarioService usuarioService = new UsuarioService();
+            rutaFoto = guardarAvatar(avatarInput, fileDetail, "usuario");
+            
+            usuarioUpdate.setNombre(nombre);
+            usuarioUpdate.setContraseña(contraseña);
+            usuarioUpdate.setFecha_nacimiento(LocalDate.parse(fecha_nacimiento));
+            usuarioUpdate.setTelefono(telefono);
+            usuarioUpdate.setAvatar(rutaFoto);
+            usuarioUpdate.setPais(pais);
+            
             usuarioService.editarUsuario(code, usuarioUpdate);
             return Response.ok().build();
-        } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+        } catch (UserDataInvalidException | IOException e) {
+            // Borrar foto si falla el registro  
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 1);
+            
         } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        }
+            // Borrar foto si falla el registro  
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 2);
+            
+        } catch (SQLException e) {
+            // Borrar foto si falla el registro  
+            eliminarFoto(rutaFoto);
+            return errorEjecucion(e.getMessage(), 3);
+        } 
     }
 
     @DELETE
@@ -212,15 +209,34 @@ public class UsuarioResource {
             usuarioService.eliminarUsuario(code);
             return Response.ok().build();
         } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 2);
+            
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
+            return errorEjecucion(e.getMessage(), 3);
+        } 
+    }
+
+    private Response errorEjecucion(String mensaje, int tipo) {
+        switch (tipo) {
+            case 1 -> {
+                Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+            }
+            case 2 -> {
+                Response.status(Response.Status.CONFLICT)
+                    .entity("{\"error\": \"" + mensaje + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
+            }
+            case 3 -> {
+                Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"" + mensaje + "\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+            }
         }
+        return null;
     }
 }
