@@ -25,7 +25,7 @@ public class UsuarioResponse {
     private LocalDate fecha_nacimiento;
     private EnumUsuario rol;
     private String telefono;
-    private String avatar;
+    private byte[] avatar;
     private String pais;
     private int empresa_id;
 
@@ -100,11 +100,11 @@ public class UsuarioResponse {
         this.telefono = telefono;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 

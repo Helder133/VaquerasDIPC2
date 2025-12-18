@@ -27,8 +27,11 @@ public class EmpresaDB   implements CRUD<Empresa> {
     private static final String SELECCIONAR_TODAS_LAS_EMPRESAS = "SELECT * FROM empresa";
     private static final String SELECCIONAR_EMPRESA_POR_INT = "SELECT * FROM empresa WHERE empresa_id = ?";
     private static final String SELECCIONAR_EMPRESA_POR_STRING = "SELECT * FROM empresa WHERE nombre like ?";
-    private static final String ELIMINAR_EMPRESA = "DELETE FROM empresa WHERE empresa_id = ?";
-    
+    /*
+     * private static final String ELIMINAR_EMPRESA = "DELETE FROM empresa WHERE empresa_id = ?";
+     * no tiene logica eliminar una empresa si no se puede eliminar un videojuego,
+     * ya que un videojuego o varios videojuegos estan relacionadas con una empresa.
+    */
     //querys auxiliares
     private static final String VERIFICAR_NOMBRE_UNICO = "SELECT * FROM empresa WHERE nombre = ?";
     private static final String VERIFICAR_NUEVO_NOMBRE = "SELECT * FROM empresa WHERE nombre = ? AND empresa_id <> ?";
@@ -72,8 +75,8 @@ public class EmpresaDB   implements CRUD<Empresa> {
             update.setString(1, t.getNombre());
             update.setString(2, t.getDescripcion());
             update.setFloat(3, t.getComision_negociada());
-            update.setInt(4, t.getEmpresa_id());
-            update.setBoolean(5, t.isEstado());
+            update.setBoolean(4, t.isEstado());
+            update.setInt(5, t.getEmpresa_id());
             
             update.executeUpdate();
         }

@@ -21,7 +21,7 @@ create table if not exists usuario (
 	fecha_nacimiento date not null,
 	rol enum('admin_sistema','manager','admin_empresa','comun') not null default 'comun',
 	telefono char(8),
-	avatar varchar(200),
+	avatar MEDIUMBLOB,
 	pais varchar(200),
 	empresa_id int,
 	constraint fk_empresa foreign key (empresa_id) references empresa (empresa_id)
@@ -51,7 +51,7 @@ create table if not exists videojuego (
 	edad_minima int not null,
 	estado bool not null,
 	fecha date not null,
-	imagen varchar(200),
+	imagen MEDIUMBLOB,
 	descripcion varchar(200),
 	constraint fk_empresa2 foreign key (empresa_id) references empresa (empresa_id) 
 );
@@ -59,8 +59,7 @@ create table if not exists videojuego (
 create table if not exists multimedia (
 	multimedia_id int not null auto_increment primary key,
 	videojuego_id int not null,
-	tipo enum ('imagen','video') not null,
-	url varchar(200) not null,
+	imagen MEDIUMBLOB not null,
 	constraint fk_videojuego foreign key (videojuego_id) references videojuego (videojuego_id)
 );
 
@@ -163,5 +162,3 @@ create table if not exists configuracion_sistema (
 	porcentaje_ganancia float not null default 15.00,
 	tamaño_grupo int not null default 6
 );
-
-

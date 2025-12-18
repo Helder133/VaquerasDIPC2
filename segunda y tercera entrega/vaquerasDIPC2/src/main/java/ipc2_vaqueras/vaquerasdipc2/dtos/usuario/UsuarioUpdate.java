@@ -20,7 +20,7 @@ public class UsuarioUpdate {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate fecha_nacimiento;
     private String telefono;
-    private String avatar;
+    private byte[] avatar;
     private String pais;
 
     public String getNombre() {
@@ -55,11 +55,11 @@ public class UsuarioUpdate {
         this.telefono = telefono;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 

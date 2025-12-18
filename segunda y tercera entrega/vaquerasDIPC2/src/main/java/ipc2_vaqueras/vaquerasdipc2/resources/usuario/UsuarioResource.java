@@ -4,7 +4,6 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.resources.usuario;
 
-import ipc2_vaqueras.vaquerasdipc2.archivo.Archivo;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
@@ -110,9 +109,11 @@ public class UsuarioResource {
             @FormDataParam("pais") String pais) {
         UsuarioService usuarioService = new UsuarioService();
         UsuarioRequest usuarioRequest = new UsuarioRequest();
-        String rutaFoto = null;
+        byte[] foto = null;
         try {
-            rutaFoto = guardarAvatar(avatarInput, fileDetail, "usuario");
+            if (avatarInput != null && fileDetail != null) {
+                foto = avatarInput.readAllBytes();
+            }
 
             usuarioRequest.setNombre(nombre);
             usuarioRequest.setEmail(email);
@@ -120,42 +121,21 @@ public class UsuarioResource {
             usuarioRequest.setFecha_nacimiento(LocalDate.parse(fecha_nacimiento));
             usuarioRequest.setRol(rol);
             usuarioRequest.setTelefono(telefono);
-            usuarioRequest.setAvatar(rutaFoto);
+            usuarioRequest.setAvatar(foto);
             usuarioRequest.setPais(pais);
 
             usuarioService.crearUsuario(usuarioRequest);
             return Response.ok().build();
         } catch (UserDataInvalidException | IOException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 1);
             
         } catch (EntityAlreadyExistsException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 2);
             
         } catch (SQLException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 3);
         }
 
-    }
-
-    private void eliminarFoto(String rutaFoto) {
-        Archivo archivo = new Archivo();
-        if (rutaFoto != null) {
-            archivo.eliminarArchivo(rutaFoto);
-        }
-    }
-
-    private String guardarAvatar(InputStream avatarInput, FormDataContentDisposition fileDetai, String subFolder) throws IOException {
-        if (avatarInput != null && fileDetai != null) {
-            Archivo archivo = new Archivo();
-            return archivo.guardarArchivo(avatarInput, fileDetai.getFileName(), subFolder);
-        }
-        return null;
     }
 
     @PUT
@@ -171,32 +151,28 @@ public class UsuarioResource {
             @FormDataParam("pais") String pais) {
         UsuarioService usuarioService = new UsuarioService();
         UsuarioUpdate usuarioUpdate = new UsuarioUpdate();
-        String rutaFoto = null;
+        byte[] foto = null;
         try {
-            rutaFoto = guardarAvatar(avatarInput, fileDetail, "usuario");
+            if (avatarInput != null && fileDetail != null) {
+                foto = avatarInput.readAllBytes();
+            }
             
             usuarioUpdate.setNombre(nombre);
             usuarioUpdate.setContraseña(contraseña);
             usuarioUpdate.setFecha_nacimiento(LocalDate.parse(fecha_nacimiento));
             usuarioUpdate.setTelefono(telefono);
-            usuarioUpdate.setAvatar(rutaFoto);
+            usuarioUpdate.setAvatar(foto);
             usuarioUpdate.setPais(pais);
             
             usuarioService.editarUsuario(code, usuarioUpdate);
             return Response.ok().build();
         } catch (UserDataInvalidException | IOException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 1);
             
         } catch (EntityAlreadyExistsException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 2);
             
         } catch (SQLException e) {
-            // Borrar foto si falla el registro  
-            eliminarFoto(rutaFoto);
             return errorEjecucion(e.getMessage(), 3);
         } 
     }
@@ -219,19 +195,19 @@ public class UsuarioResource {
     private Response errorEjecucion(String mensaje, int tipo) {
         switch (tipo) {
             case 1 -> {
-                Response.status(Response.Status.BAD_REQUEST)
+                return Response.status(Response.Status.BAD_REQUEST)
                         .entity("{\"error\": \"" + mensaje + "\"}")
                         .type(MediaType.APPLICATION_JSON)
                         .build();
             }
             case 2 -> {
-                Response.status(Response.Status.CONFLICT)
+                return Response.status(Response.Status.CONFLICT)
                     .entity("{\"error\": \"" + mensaje + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();
             }
             case 3 -> {
-                Response.status(Response.Status.NOT_FOUND)
+                return Response.status(Response.Status.NOT_FOUND)
                     .entity("{\"error\": \"" + mensaje + "\"}")
                     .type(MediaType.APPLICATION_JSON)
                     .build();

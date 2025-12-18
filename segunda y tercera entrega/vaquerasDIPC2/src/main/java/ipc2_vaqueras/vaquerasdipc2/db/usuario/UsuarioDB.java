@@ -53,7 +53,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getDate("fecha_nacimiento").toLocalDate(),
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
-                        resultSet.getString("avatar"),
+                        resultSet.getBytes("avatar"),
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
@@ -78,7 +78,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getDate("fecha_nacimiento").toLocalDate(),
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
-                        resultSet.getString("avatar"),
+                        resultSet.getBytes("avatar"),
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
@@ -119,7 +119,7 @@ public class UsuarioDB implements CRUD<Usuario> {
             insert.setDate(4, Date.valueOf(t.getFecha_nacimiento()));
             insert.setString(5, t.getRol().toString());
             insert.setString(6, t.getTelefono());
-            insert.setString(7, t.getAvatar());
+            insert.setBytes(7, t.getAvatar());
             insert.setString(8, t.getPais());
 
             insert.executeUpdate();
@@ -134,7 +134,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                 update.setString(1, t.getNombre());
                 update.setDate(2, Date.valueOf(t.getFecha_nacimiento()));
                 update.setString(3, t.getTelefono());
-                update.setString(4, t.getAvatar());
+                update.setBytes(4, t.getAvatar());
                 update.setString(5, t.getPais());
                 update.setInt(6, t.getUsuario_id());
                 update.executeUpdate();
@@ -145,7 +145,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                 update.setString(2, t.getContraseña());
                 update.setDate(3, Date.valueOf(t.getFecha_nacimiento()));
                 update.setString(4, t.getTelefono());
-                update.setString(5, t.getAvatar());
+                update.setBytes(5, t.getAvatar());
                 update.setString(6, t.getPais());
                 update.setInt(7, t.getUsuario_id());
                 update.executeUpdate();
@@ -171,7 +171,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getDate("fecha_nacimiento").toLocalDate(),
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
-                        resultSet.getString("avatar"),
+                        resultSet.getBytes("avatar"),
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
@@ -197,7 +197,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getDate("fecha_nacimiento").toLocalDate(),
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
-                        resultSet.getString("avatar"),
+                        resultSet.getBytes("avatar"),
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
@@ -228,7 +228,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getDate("fecha_nacimiento").toLocalDate(),
                         EnumUsuario.valueOf(resultSet.getString("rol")),
                         resultSet.getString("telefono"),
-                        resultSet.getString("avatar"),
+                        resultSet.getBytes("avatar"),
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));

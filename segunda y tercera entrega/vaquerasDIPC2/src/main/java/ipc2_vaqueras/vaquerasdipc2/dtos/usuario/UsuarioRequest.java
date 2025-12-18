@@ -23,7 +23,7 @@ public class UsuarioRequest {
     private LocalDate fecha_nacimiento;
     private EnumUsuario rol;
     private String telefono;
-    private String avatar;
+    private byte[] avatar;
     private String pais;
 
     public String getNombre() {
@@ -74,11 +74,11 @@ public class UsuarioRequest {
         this.telefono = telefono;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 

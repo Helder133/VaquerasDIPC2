@@ -22,11 +22,11 @@ public class Usuario {
     private LocalDate fecha_nacimiento;
     private EnumUsuario rol;
     private String telefono;
-    private String avatar;
+    private byte[] avatar;
     private String pais;
     private int empresa_id;
 
-    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, String avatar, String pais) {
+    public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, byte[] avatar, String pais) {
         this.nombre = nombre;
         this.email = email;
         this.contraseña = incriptarContraseña(contraseña);
@@ -93,11 +93,11 @@ public class Usuario {
         this.telefono = telefono;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 

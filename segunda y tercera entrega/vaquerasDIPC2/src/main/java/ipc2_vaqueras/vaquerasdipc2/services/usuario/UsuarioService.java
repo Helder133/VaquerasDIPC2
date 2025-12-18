@@ -93,9 +93,6 @@ public class UsuarioService {
 
     private boolean ValidarDatosAActualizar(Usuario usuario) {
         return StringUtils.isBlank(usuario.getNombre())
-                && StringUtils.isBlank(usuario.getTelefono())
-                && StringUtils.isBlank(usuario.getAvatar())
-                && StringUtils.isBlank(usuario.getPais())
                 && usuario.getFecha_nacimiento() != null;
     }
 
