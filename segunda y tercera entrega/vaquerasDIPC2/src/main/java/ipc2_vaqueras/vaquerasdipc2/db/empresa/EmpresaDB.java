@@ -154,7 +154,7 @@ public class EmpresaDB   implements CRUD<Empresa> {
     }
 
     @Override
-    public void eleiminar(int t) throws SQLException {
+    public void eliminar(int t) throws SQLException {
         /*
         *No se puede eliminar una empresa ya que lo juegos tampo se pueden eliminar, en vez de eso, mejor se tiene una bansera
         *que indica si la empresa sigue desarrolando videojuego o ya no esta desarrollando videojugo

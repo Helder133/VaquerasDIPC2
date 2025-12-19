@@ -240,7 +240,7 @@ public class UsuarioDB implements CRUD<Usuario> {
     }
 
     @Override
-    public void eleiminar(int t) throws SQLException {
+    public void eliminar(int t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement delete = connection.prepareStatement(ELIMINAR_USUARIO)) {
             delete.setInt(1, t);

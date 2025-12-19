@@ -88,7 +88,7 @@ public class EmpresaService {
         return empresaOpt.get();
     }
 
-    public List<Empresa> seleccionarEmpresaPorParametro(String code) throws SQLException, UserDataInvalidException {
+    public List<Empresa> seleccionarEmpresaPorParametro(String code) throws SQLException {
         EmpresaDB empresaDB = new EmpresaDB();
         return empresaDB.seleccionarPorParametro(code);
     }
@@ -100,7 +100,7 @@ public class EmpresaService {
             throw new EntityAlreadyExistsException(
                     "La empresa que trata de eliminar, no existe");
         }
-        empresaDB.eleiminar(code);
+        empresaDB.eliminar(code);
     }
 
 }

@@ -25,5 +25,5 @@ public interface CRUD<T> {
 
     public List<T> seleccionarPorParametro(String t) throws SQLException;
 
-    public void eleiminar(int t) throws SQLException;
+    public void eliminar(int t) throws SQLException;
 }

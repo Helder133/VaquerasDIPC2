@@ -4,6 +4,8 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.categoria;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author helder
@@ -42,5 +44,9 @@ public class Categoria {
     public void setCategoria_id(int categoria_id) {
         this.categoria_id = categoria_id;
     }
-
+    
+    public boolean isValid () {
+        return StringUtils.isNotBlank(nombre) 
+                && StringUtils.isNotBlank(descripcion);
+    }
 }

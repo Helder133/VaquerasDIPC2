@@ -7,10 +7,12 @@ package ipc2_vaqueras.vaquerasdipc2.resources.usuario;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
+import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraResponse;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
+import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.Cartera;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.UsuarioService;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
@@ -78,7 +80,23 @@ public class UsuarioResource {
             return errorEjecucion(e.getMessage(), 3);
         } 
     }
-
+    
+    @GET
+    @Path("/cartera/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerCartera(@PathParam("id") int id) {
+        UsuarioService usuarioService = new UsuarioService();
+        try {
+            Cartera cartera = usuarioService.obtenerCartera(id);
+            return Response.ok(new CarteraResponse(cartera)).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+            
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
     private Response obtenerUsuariosPorString(String code) {
         List<UsuarioResponse> usuarios;
         UsuarioService usuarioService = new UsuarioService();
@@ -137,7 +155,7 @@ public class UsuarioResource {
         }
 
     }
-
+            
     @PUT
     @Path("{code}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)

@@ -45,20 +45,11 @@ public class EmpresaResource {
             empresaService.crearEmpresa(empresaRequest);
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 1);
         } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 2);
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
 
@@ -73,10 +64,7 @@ public class EmpresaResource {
                     .toList();
             return Response.ok(empresas).build();
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
 
@@ -92,16 +80,10 @@ public class EmpresaResource {
             return Response.ok(new EmpresaResponse(existingEmpresa)).build();
         } catch (NumberFormatException e) {
             return obtenerEmpresaPorParametroString(code);
-        } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
         } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 1);
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
     
@@ -114,16 +96,8 @@ public class EmpresaResource {
                     .map(EmpresaResponse::new)
                     .toList();
             return Response.ok(empresas).build();
-        } catch (SQLException ex) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + ex.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
-        } catch (UserDataInvalidException ex) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + ex.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+        }  catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
     
@@ -137,20 +111,11 @@ public class EmpresaResource {
             empresaService.editarEmpresa(code, empresaUpdate);
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 1);
         } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 2);
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 3);
         }
     }
     /*
@@ -162,15 +127,34 @@ public class EmpresaResource {
             empresaService.eliminarEmpresa(code);
             return Response.ok().build();
         } catch (EntityAlreadyExistsException e) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 2);
         } catch (SQLException e) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + e.getMessage() + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+            return errorEjecucion(e.getMessage(), 3);
         }
     }*/
+    
+    private Response errorEjecucion(String mensaje, int tipo) {
+        switch (tipo) {
+            case 1 -> {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
+            }
+            case 2 -> {
+                return Response.status(Response.Status.CONFLICT)
+                    .entity("{\"error\": \"" + mensaje + "\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+            }
+            case 3 -> {
+                return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"" + mensaje + "\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+            }
+        }
+        return null;
+    }
+    
 }
