@@ -16,11 +16,13 @@ public class Historial {
     private int cartera_id;
     private EnumHistorial transaccion;
     private LocalDate fecha;
-
-    public Historial(int cartera_id, EnumHistorial transaccion, LocalDate fecha) {
+    private float monto;
+    
+    public Historial(int cartera_id, EnumHistorial transaccion, LocalDate fecha, float monto) {
         this.cartera_id = cartera_id;
         this.transaccion = transaccion;
         this.fecha = fecha;
+        this.monto = monto;
     }
 
     public int getHistorial_id() {
@@ -59,6 +61,14 @@ public class Historial {
         return fecha != null 
                 && transaccion != null
                 && cartera_id > 0;
+    }
+
+    public float getMonto() {
+        return monto;
+    }
+
+    public void setMonto(float monto) {
+        this.monto = monto;
     }
     
 }

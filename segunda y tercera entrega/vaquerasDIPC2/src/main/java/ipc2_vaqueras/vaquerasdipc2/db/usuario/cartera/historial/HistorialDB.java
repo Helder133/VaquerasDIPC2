@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 public class HistorialDB implements CRUD<Historial> {
 
-    private static final String INSERTAR_HISTORIAL = "INSERT INTO historial_cartera (cartera_id, transaccion, fecha) VALUES (?, ?, ?)";
+    private static final String INSERTAR_HISTORIAL = "INSERT INTO historial_cartera (cartera_id, transaccion, fecha, monto) VALUES (?, ?, ?, ?)";
     private static final String SELECCIONAR_HISTORIAL= "SELECT * FROM historial_cartera WHERE cartera_id = ?";
     private static final String ELIMINAR_HISTORIAL = "DELETE FROM historial_cartera WHERE cartera_id = ?";
     
@@ -43,6 +43,7 @@ public class HistorialDB implements CRUD<Historial> {
             update.setInt(1, t.getCartera_id());
             update.setString(2, t.getTransaccion().toString());
             update.setDate(3, Date.valueOf(t.getFecha()));
+            update.setFloat(4, t.getMonto());
             update.executeUpdate();
         }
     }
@@ -59,7 +60,8 @@ public class HistorialDB implements CRUD<Historial> {
                 Historial historial = new Historial(
                         resultSet.getInt("cartera_id"),
                         EnumHistorial.valueOf(resultSet.getString("transaccion")),
-                        resultSet.getDate("fehca").toLocalDate()
+                        resultSet.getDate("fehca").toLocalDate(),
+                        resultSet.getFloat("monto")
                 );
                 historial.setHistorial_id(resultSet.getInt("historial_id"));
                 historials.add(historial);

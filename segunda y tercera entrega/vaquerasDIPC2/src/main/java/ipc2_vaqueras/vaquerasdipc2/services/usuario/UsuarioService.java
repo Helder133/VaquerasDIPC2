@@ -8,6 +8,7 @@ import ipc2_vaqueras.vaquerasdipc2.db.usuario.UsuarioDB;
 import ipc2_vaqueras.vaquerasdipc2.dtos.login.LoginRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
+import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
@@ -155,4 +156,8 @@ public class UsuarioService {
         return carteraService.seleccionarCartera(usuario_id);
     }
     
+    public void depositarEnCartera(CarteraUpdate carteraUpdate) throws SQLException, UserDataInvalidException {
+        CarteraService carteraService = new CarteraService();
+        carteraService.actualizarCarteraDeposito(carteraUpdate);
+    }    
 }

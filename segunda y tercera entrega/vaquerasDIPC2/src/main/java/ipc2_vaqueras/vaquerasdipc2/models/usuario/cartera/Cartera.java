@@ -43,4 +43,9 @@ public class Cartera {
         this.saldo = saldo;
     }
     
+    public boolean isValid() {
+        return usuario_id > 0
+                && saldo >= 0;
+    }
+    
 }

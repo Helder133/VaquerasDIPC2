@@ -8,6 +8,7 @@ import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraResponse;
+import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
@@ -193,6 +194,22 @@ public class UsuarioResource {
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         } 
+    }
+    
+    @PUT
+    @Path("/cartera")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response recargarCartera(CarteraUpdate carteraUpdate) {
+        try {
+            UsuarioService usuarioService = new UsuarioService();
+            usuarioService.depositarEnCartera(carteraUpdate);
+            return Response.ok().build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+            
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
     }
 
     @DELETE

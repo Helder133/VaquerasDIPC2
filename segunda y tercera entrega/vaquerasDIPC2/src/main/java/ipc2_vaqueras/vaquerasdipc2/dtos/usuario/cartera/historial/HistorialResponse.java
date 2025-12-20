@@ -18,12 +18,14 @@ public class HistorialResponse {
     private int cartera_id;
     private EnumHistorial transaccion;
     private LocalDate fecha;
+    private float monto;
 
     public HistorialResponse(Historial historial) {
         this.historial_id = historial.getHistorial_id();
         this.cartera_id = historial.getCartera_id();
         this.transaccion = historial.getTransaccion();
         this.fecha = historial.getFecha();
+        this.monto = historial.getMonto();
     }
 
     public int getHistorial_id() {
@@ -57,4 +59,13 @@ public class HistorialResponse {
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
+
+    public float getMonto() {
+        return monto;
+    }
+
+    public void setMonto(float monto) {
+        this.monto = monto;
+    }
+    
 }
