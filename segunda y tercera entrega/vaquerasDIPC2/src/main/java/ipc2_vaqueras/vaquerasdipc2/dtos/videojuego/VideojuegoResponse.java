@@ -1,0 +1,124 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package ipc2_vaqueras.vaquerasdipc2.dtos.videojuego;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
+import java.time.LocalDate;
+
+/**
+ *
+ * @author helder
+ */
+public class VideojuegoResponse {
+    private int videojuego_id;
+    private int empresa_id;
+    private String nombre;
+    private float precio;
+    private String recurso_minimo;
+    private int edad_minima;
+    private boolean estado;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDate fecha;
+    private byte[] imagen;
+    private String descripcion;
+    
+    public VideojuegoResponse(Videojuego videojuego){
+        this.videojuego_id = videojuego.getVideojuego_id();
+        this.empresa_id = videojuego.getEmpresa_id();
+        this.nombre = videojuego.getNombre();
+        this.precio = videojuego.getPrecio();
+        this.recurso_minimo = videojuego.getRecurso_minimo();
+        this.edad_minima = videojuego.getEdad_minima();
+        this.estado = videojuego.isEstado();
+        this.fecha = videojuego.getFecha();
+        this.imagen = videojuego.getImagen();
+        this.descripcion = videojuego.getDescripcion();
+    }
+
+    public int getVideojuego_id() {
+        return videojuego_id;
+    }
+
+    public void setVideojuego_id(int videojuego_id) {
+        this.videojuego_id = videojuego_id;
+    }
+
+    public int getEmpresa_id() {
+        return empresa_id;
+    }
+
+    public void setEmpresa_id(int empresa_id) {
+        this.empresa_id = empresa_id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public float getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(float precio) {
+        this.precio = precio;
+    }
+
+    public String getRecurso_minimo() {
+        return recurso_minimo;
+    }
+
+    public void setRecurso_minimo(String recurso_minimo) {
+        this.recurso_minimo = recurso_minimo;
+    }
+
+    public int getEdad_minima() {
+        return edad_minima;
+    }
+
+    public void setEdad_minima(int edad_minima) {
+        this.edad_minima = edad_minima;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    
+}

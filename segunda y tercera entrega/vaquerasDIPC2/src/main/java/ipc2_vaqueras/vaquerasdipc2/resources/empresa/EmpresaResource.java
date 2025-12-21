@@ -7,6 +7,7 @@ package ipc2_vaqueras.vaquerasdipc2.resources.empresa;
 import ipc2_vaqueras.vaquerasdipc2.dtos.empresa.EmpresaRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.empresa.EmpresaResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.empresa.EmpresaUpdate;
+import ipc2_vaqueras.vaquerasdipc2.dtos.videojuego.VideojuegoResponse;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.empresa.Empresa;
@@ -67,7 +68,23 @@ public class EmpresaResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-
+    
+    @GET
+    @Path("/videojuego/{code}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerVideojuegoEmpresa(@PathParam("code") int code) {
+        try {
+            EmpresaService empresaService = new EmpresaService();
+            List<VideojuegoResponse> videojuegos = empresaService.obteneVideojuegosDeLaEmpresa(code)
+                    .stream()
+                    .map(VideojuegoResponse::new)
+                    .toList();
+            return Response.ok(videojuegos).build();
+         } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
     @GET
     @Path("{code}")
     @Produces(MediaType.APPLICATION_JSON)

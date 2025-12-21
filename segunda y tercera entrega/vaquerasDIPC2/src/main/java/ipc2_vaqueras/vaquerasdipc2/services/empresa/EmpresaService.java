@@ -10,6 +10,8 @@ import ipc2_vaqueras.vaquerasdipc2.dtos.empresa.EmpresaUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.empresa.Empresa;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
+import ipc2_vaqueras.vaquerasdipc2.services.videojuego.VideojuegoService;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -103,4 +105,9 @@ public class EmpresaService {
         empresaDB.eliminar(code);
     }
 
+    public List<Videojuego> obteneVideojuegosDeLaEmpresa(int code) throws SQLException {
+        VideojuegoService videojuegoService = new VideojuegoService();
+        return videojuegoService.obtenerTodosLosVideojuegosDeUnaEmpresa(code);
+    }
+    
 }
