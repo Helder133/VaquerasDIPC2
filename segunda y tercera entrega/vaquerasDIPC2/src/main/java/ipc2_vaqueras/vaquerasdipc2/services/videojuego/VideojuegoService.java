@@ -5,9 +5,13 @@
 package ipc2_vaqueras.vaquerasdipc2.services.videojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.db.videojuego.VideojuegoDB;
+import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaRequest;
+import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import ipc2_vaqueras.vaquerasdipc2.services.empresa.EmpresaService;
+import ipc2_vaqueras.vaquerasdipc2.services.multimedia.MultimediaService;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +29,7 @@ public class VideojuegoService {
         }
         EmpresaService empresaService = new EmpresaService();
         empresaService.seleccionarEmpresaPorParametro(videojuego.getEmpresa_id());
-        
+
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         videojuegoDB.insertar(videojuego);
     }
@@ -70,5 +74,37 @@ public class VideojuegoService {
                 && videojuego.getPrecio() > 0
                 && StringUtils.isNotBlank(videojuego.getRecurso_minimo())
                 && videojuego.getEdad_minima() > 0;
+    }
+
+    //Multimedia de un videojuego...
+    public void crearMultimedia(MultimediaRequest multimediaRequest) throws SQLException, UserDataInvalidException {
+        obtenerVideojuegosPorParametro(multimediaRequest.getVideojuego_id());
+        
+        MultimediaService multimediaService = new MultimediaService();
+        multimediaService.crearMultimedia(multimediaRequest);
+    }
+
+    public void editarMultimedia(MultimediaUpdate multimediaUpdate, int id) throws SQLException, UserDataInvalidException {
+        obtenerVideojuegosPorParametro(multimediaUpdate.getVideojuego_id());
+        
+        MultimediaService multimediaService = new MultimediaService();
+        multimediaService.editarMultimedia(multimediaUpdate, id);
+    }
+
+    public Multimedia obtenerMultimediaPorId(int t) throws SQLException, UserDataInvalidException {
+        MultimediaService multimediaService = new MultimediaService();
+        return multimediaService.obtenerMultimediaPorId(t);
+    }
+    
+    public List<Multimedia> obtenerMultimediasDeUnVideojuego(int t) throws SQLException, UserDataInvalidException {
+         obtenerVideojuegosPorParametro(t);
+        
+        MultimediaService multimediaService = new MultimediaService();
+        return multimediaService.obtenerMultimediasDeUnVideojuego(t);
+    }
+    
+    public void eliminarMultimedia(int t) throws SQLException {
+        MultimediaService multimediaService = new MultimediaService();
+        multimediaService.eliminarMultimedia(t);
     }
 }

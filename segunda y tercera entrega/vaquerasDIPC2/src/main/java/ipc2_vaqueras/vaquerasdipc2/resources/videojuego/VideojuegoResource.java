@@ -4,13 +4,18 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.resources.videojuego;
 
+import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaRequest;
+import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaResponse;
+import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaUpdate;
 import ipc2_vaqueras.vaquerasdipc2.dtos.videojuego.VideojuegoResponse;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import ipc2_vaqueras.vaquerasdipc2.services.videojuego.VideojuegoService;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Produces;
@@ -24,6 +29,8 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -148,6 +155,108 @@ public class VideojuegoResource {
         }
     }
 
+    //Multimedia
+    @POST
+    @Path("/multimedia")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response crearMultimedia(@FormDataParam("videojuego_id") int videojuego_id,
+            @FormDataParam("imagen") InputStream imagenInput,
+            @FormDataParam("imagen") FormDataContentDisposition fileDetail
+    ) {
+        VideojuegoService videojuegoService = new VideojuegoService();
+        byte[] imagen = null;
+        try {
+            if (imagenInput != null && fileDetail != null) {
+                imagen = imagenInput.readAllBytes();
+            }
+            MultimediaRequest multimediaRequest = new MultimediaRequest();
+            multimediaRequest.setVideojuego_id(videojuego_id);
+            multimediaRequest.setImagen(imagen);
+            videojuegoService.crearMultimedia(multimediaRequest);
+            return Response.ok().build();
+        } catch (UserDataInvalidException | IOException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+
+    @PUT
+    @Path("/multimedia/{id}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response editarMultimedia(@PathParam("id") int id,
+            @FormDataParam("videojuego_id") int videojuego_id,
+            @FormDataParam("imagen") InputStream imagenInput,
+            @FormDataParam("imagen") FormDataContentDisposition fileDetail
+    ) {
+        VideojuegoService videojuegoService = new VideojuegoService();
+        byte[] imagen = null;
+        try {
+            if (imagenInput != null && fileDetail != null) {
+                imagen = imagenInput.readAllBytes();
+            }
+            MultimediaUpdate multimediaUpdate = new MultimediaUpdate();
+            multimediaUpdate.setVideojuego_id(videojuego_id);
+            multimediaUpdate.setImagen(imagen);
+            videojuegoService.editarMultimedia(multimediaUpdate, id);
+            return Response.ok().build();
+        } catch (UserDataInvalidException | IOException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @GET
+    @Path("/multimedia/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerMultimedia(@PathParam("id") int id) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            Multimedia multimedia = videojuegoService.obtenerMultimediaPorId(id);
+            return Response.ok(new MultimediaResponse(multimedia)).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @GET
+    @Path("/multimedias/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerMultimediasSe(@PathParam("id") int id) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            List<MultimediaResponse> multimedias = videojuegoService.obtenerMultimediasDeUnVideojuego(id)
+                    .stream()
+                    .map(MultimediaResponse::new)
+                    .toList();
+            return Response.ok(multimedias).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @DELETE
+    @Path("/multimedia/{id}")
+    public Response eliminarMultimedia(@PathParam("id") int id) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            videojuegoService.eliminarMultimedia(id);
+            return Response.ok().build();
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    
     private Response errorEjecucion(String mensaje, int tipo) {
         switch (tipo) {
             case 1 -> {
