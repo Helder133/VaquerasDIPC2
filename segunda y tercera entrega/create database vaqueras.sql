@@ -39,6 +39,7 @@ create table if not exists historial_cartera (
 	cartera_id int not null,
 	transaccion enum ('deposito','pago'),
 	fecha date,
+	monto float not null,
 	constraint fk_cartera foreign key (cartera_id) references cartera_digital (cartera_id)
 );
 
