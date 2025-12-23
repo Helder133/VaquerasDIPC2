@@ -219,8 +219,8 @@ public class UsuarioResource {
             UsuarioService usuarioService = new UsuarioService();
             usuarioService.eliminarUsuario(code);
             return Response.ok().build();
-        } catch (EntityAlreadyExistsException e) {
-            return errorEjecucion(e.getMessage(), 2);
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
             
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);

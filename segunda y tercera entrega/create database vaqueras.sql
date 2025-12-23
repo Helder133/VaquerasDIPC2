@@ -66,7 +66,7 @@ create table if not exists multimedia (
 
 create table if not exists categoria (
 	categoria_id int not null auto_increment primary key,
-	nombre varchar(150) not null,
+	nombre varchar(150) not null unique ,
 	descripcion varchar(200) not null
 );
 
@@ -77,6 +77,12 @@ create table if not exists categoria_videojuego (
 	constraint fk_videojuego2 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_categoria foreign key (categoria_id) references categoria (categoria_id)
 );
+
+select  c.nombre,
+	cv.videojuego_id,
+	cv.categoria_id
+from categoria c join categoria_videojuego cv on c.categoria_id = cv.categoria_id
+where cv.videojuego_id = ?;
 
 create table if not exists comprar_videojuego (
 	videojuego_id int not null,

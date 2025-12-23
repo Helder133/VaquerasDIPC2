@@ -4,6 +4,7 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.services.usuario;
 
+import ipc2_vaqueras.vaquerasdipc2.db.DBConnection;
 import ipc2_vaqueras.vaquerasdipc2.db.usuario.UsuarioDB;
 import ipc2_vaqueras.vaquerasdipc2.dtos.login.LoginRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioRequest;
@@ -16,6 +17,7 @@ import ipc2_vaqueras.vaquerasdipc2.models.usuario.Login;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.Cartera;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.cartera.CarteraService;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author helder
  */
 public class UsuarioService {
-    
+
     public Usuario login(LoginRequest loginRequest) throws SQLException, UserDataInvalidException {
         Login login = new Login(loginRequest.getEmail(), loginRequest.getContraseña());
         UsuarioDB usuarioDB = new UsuarioDB();
@@ -36,22 +38,41 @@ public class UsuarioService {
         }
         return usuarioOpt.get();
     }
-    
+
     public void crearUsuario(UsuarioRequest usuarioRequest) throws UserDataInvalidException, SQLException, EntityAlreadyExistsException {
         Usuario usuario = extraerUsuario(usuarioRequest);
         UsuarioDB usuarioDB = new UsuarioDB();
-        if (!usuarioDB.obtenerUsuarioPorEmail(usuario.getEmail()).isEmpty()) {
-            throw new EntityAlreadyExistsException(String.format("El correo: %s, ya esta relacionado con otro usuario", usuario.getEmail()));
-        }
-        if (usuarioDB.validarTelefono(usuario.getTelefono())) {
-            throw new EntityAlreadyExistsException(String.format("El telefono: %s, ya esta relacionado con otro usuario", usuario.getTelefono()));
-        }
-        usuarioDB.insertar(usuario);
+        CarteraService carteraService = new CarteraService();
+        Connection connection = null;
+        try {
+            connection = DBConnection.getInstance().getConnection();
+            
+            connection.setAutoCommit(false);
 
-        if (usuario.getRol().equals(EnumUsuario.comun)) {
-            Usuario usuarioC = usuarioDB.obtenerUsuarioPorEmail(usuario.getEmail()).get();
-            CarteraService carteraService = new CarteraService();
-            carteraService.crearCartera(usuarioC.getUsuario_id());
+            if (!usuarioDB.obtenerUsuarioPorEmail(usuario.getEmail()).isEmpty()) {
+                throw new EntityAlreadyExistsException(String.format("El correo: %s, ya esta relacionado con otro usuario", usuario.getEmail()));
+            }
+            if (usuarioDB.validarTelefono(usuario.getTelefono())) {
+                throw new EntityAlreadyExistsException(String.format("El telefono: %s, ya esta relacionado con otro usuario", usuario.getTelefono()));
+            }
+            int usuario_id = usuarioDB.insertar(usuario, connection);
+
+            if (usuario.getRol().equals(EnumUsuario.comun)) {
+                carteraService.crearCartera(usuario_id, connection);
+            }
+
+            connection.commit();
+
+        } catch (EntityAlreadyExistsException | SQLException e) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
         }
 
     }
@@ -137,27 +158,43 @@ public class UsuarioService {
         return usuarioDB.seleccionarPorParametro(code);
     }
 
-    public void eliminarUsuario(int code) throws SQLException, EntityAlreadyExistsException {
+    public void eliminarUsuario(int code) throws SQLException, UserDataInvalidException {
         UsuarioDB usuarioDB = new UsuarioDB();
         Optional<Usuario> usuarioOpt = usuarioDB.seleccionarPorParametro(code);
         if (usuarioOpt.isEmpty()) {
-            throw new EntityAlreadyExistsException("El usuario que trata de eliminar, no existe");
+            throw new UserDataInvalidException("El usuario que trata de eliminar, no existe");
         }
+        Connection connection = null;
         try {
+            connection = DBConnection.getInstance().getConnection();
+            connection.setAutoCommit(false);
+            
             CarteraService carteraService = new CarteraService();
-            carteraService.eliminarCartera(code);
+            carteraService.eliminarCartera(code, connection);
+            usuarioDB.eliminar(code, connection);
+            
+            
+            connection.commit();
         } catch (UserDataInvalidException | SQLException e) {
+            if (connection != null) {
+                connection.rollback();
+            }
+            throw e;
+        } finally {
+            if (connection != null) {
+                connection.setAutoCommit(true);
+                connection.close();
+            }
         }
-        usuarioDB.eliminar(code);
     }
-    
+
     public Cartera obtenerCartera(int usuario_id) throws SQLException, UserDataInvalidException {
         CarteraService carteraService = new CarteraService();
         return carteraService.seleccionarCartera(usuario_id);
     }
-    
+
     public void depositarEnCartera(CarteraUpdate carteraUpdate) throws SQLException, UserDataInvalidException {
         CarteraService carteraService = new CarteraService();
         carteraService.actualizarCarteraDeposito(carteraUpdate);
-    }    
+    }
 }

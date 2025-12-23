@@ -37,7 +37,16 @@ public class CarteraDB implements CRUD<Cartera> {
             return resultSet.next();
         }
     }
-
+    
+    public void insertar(Cartera t, Connection connection) throws SQLException {
+        try (PreparedStatement update = connection.prepareStatement(INSERTAR_CARTERA)) {
+            update.setInt(1, t.getUsuario_id());
+            update.setFloat(2, t.getSaldo());
+            
+            update.executeUpdate();
+        }
+    }
+    
     @Override
     public void insertar(Cartera t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
@@ -48,6 +57,14 @@ public class CarteraDB implements CRUD<Cartera> {
         }
     }
 
+    public void actualizar(Cartera t, Connection connection) throws SQLException {
+        try (PreparedStatement update = connection.prepareStatement(ACTUALIZAR_CARTERA)) {
+            update.setFloat(1, t.getSaldo());
+            update.setInt(2, t.getCartera_id());
+            update.executeUpdate();
+        }
+    }
+    
     @Override
     public void actualizar(Cartera t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
@@ -87,6 +104,13 @@ public class CarteraDB implements CRUD<Cartera> {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public void eliminar(int t, Connection connection) throws SQLException {
+        try (PreparedStatement delete = connection.prepareStatement(ELIMINAR_CARTERA)) {
+            delete.setInt(1, t);
+            delete.executeUpdate();
+        }
+    }
+    
     @Override
     public void eliminar(int t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();

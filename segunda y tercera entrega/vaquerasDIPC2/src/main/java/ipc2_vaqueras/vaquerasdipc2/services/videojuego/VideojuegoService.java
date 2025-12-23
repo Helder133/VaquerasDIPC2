@@ -107,4 +107,7 @@ public class VideojuegoService {
         MultimediaService multimediaService = new MultimediaService();
         multimediaService.eliminarMultimedia(t);
     }
+    
+    //Categorias de un videojuego
+    
 }

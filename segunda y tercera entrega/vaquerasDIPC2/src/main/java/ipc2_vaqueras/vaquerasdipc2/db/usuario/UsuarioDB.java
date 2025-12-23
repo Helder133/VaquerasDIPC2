@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +108,26 @@ public class UsuarioDB implements CRUD<Usuario> {
             ResultSet resultSet = validarTelefono.executeQuery();
             return resultSet.next();
         }
+    }
+    
+    //metodo de insertar con transaccion
+    public int insertar(Usuario t, Connection connection) throws SQLException {
+        try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO, Statement.RETURN_GENERATED_KEYS)) {
+            insert.setString(1, t.getNombre());
+            insert.setString(2, t.getEmail());
+            insert.setString(3, t.getContraseña());
+            insert.setDate(4, Date.valueOf(t.getFecha_nacimiento()));
+            insert.setString(5, t.getRol().toString());
+            insert.setString(6, t.getTelefono());
+            insert.setBytes(7, t.getAvatar());
+            insert.setString(8, t.getPais());
+
+            insert.executeUpdate();
+            
+            ResultSet resultSet = insert.getGeneratedKeys();
+            if (resultSet.next()) return resultSet.getInt(1);
+        }
+        throw new SQLException("No se puedo crear el usuario");
     }
     
     @Override
@@ -239,6 +260,13 @@ public class UsuarioDB implements CRUD<Usuario> {
         }
     }
 
+    public void eliminar(int t, Connection connection) throws SQLException {
+        try (PreparedStatement delete = connection.prepareStatement(ELIMINAR_USUARIO)) {
+            delete.setInt(1, t);
+            delete.executeUpdate();
+        }
+    }
+    
     @Override
     public void eliminar(int t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
