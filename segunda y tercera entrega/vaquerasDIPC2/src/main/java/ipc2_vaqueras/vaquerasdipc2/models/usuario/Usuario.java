@@ -25,6 +25,7 @@ public class Usuario {
     private byte[] avatar;
     private String pais;
     private int empresa_id;
+    private String nombreEmpresa;
 
     public Usuario(String nombre, String email, String contraseña, LocalDate fecha_nacimiento, EnumUsuario rol, String telefono, byte[] avatar, String pais) {
         this.nombre = nombre;
@@ -116,7 +117,15 @@ public class Usuario {
     public void setEmpresa_id(int empresa_id) {
         this.empresa_id = empresa_id;
     }
+    
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
 
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
+    }
+    
     public boolean isValid() {
         return StringUtils.isNotBlank(nombre)
                 && StringUtils.isNotBlank(email)

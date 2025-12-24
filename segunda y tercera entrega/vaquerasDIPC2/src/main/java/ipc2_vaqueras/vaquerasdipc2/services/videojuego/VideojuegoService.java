@@ -5,11 +5,15 @@
 package ipc2_vaqueras.vaquerasdipc2.services.videojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.db.videojuego.VideojuegoDB;
+import ipc2_vaqueras.vaquerasdipc2.dtos.categoria.videojuego.CategoriaVideojuegoRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaUpdate;
+import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
+import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
+import ipc2_vaqueras.vaquerasdipc2.services.categoria.videojuego.CategoriaVideojuegoService;
 import ipc2_vaqueras.vaquerasdipc2.services.empresa.EmpresaService;
 import ipc2_vaqueras.vaquerasdipc2.services.multimedia.MultimediaService;
 import java.sql.SQLException;
@@ -79,14 +83,14 @@ public class VideojuegoService {
     //Multimedia de un videojuego...
     public void crearMultimedia(MultimediaRequest multimediaRequest) throws SQLException, UserDataInvalidException {
         obtenerVideojuegosPorParametro(multimediaRequest.getVideojuego_id());
-        
+
         MultimediaService multimediaService = new MultimediaService();
         multimediaService.crearMultimedia(multimediaRequest);
     }
 
     public void editarMultimedia(MultimediaUpdate multimediaUpdate, int id) throws SQLException, UserDataInvalidException {
         obtenerVideojuegosPorParametro(multimediaUpdate.getVideojuego_id());
-        
+
         MultimediaService multimediaService = new MultimediaService();
         multimediaService.editarMultimedia(multimediaUpdate, id);
     }
@@ -95,19 +99,33 @@ public class VideojuegoService {
         MultimediaService multimediaService = new MultimediaService();
         return multimediaService.obtenerMultimediaPorId(t);
     }
-    
+
     public List<Multimedia> obtenerMultimediasDeUnVideojuego(int t) throws SQLException, UserDataInvalidException {
-         obtenerVideojuegosPorParametro(t);
-        
+        obtenerVideojuegosPorParametro(t);
+
         MultimediaService multimediaService = new MultimediaService();
         return multimediaService.obtenerMultimediasDeUnVideojuego(t);
     }
-    
+
     public void eliminarMultimedia(int t) throws SQLException {
         MultimediaService multimediaService = new MultimediaService();
         multimediaService.eliminarMultimedia(t);
     }
-    
+
     //Categorias de un videojuego
+    public void crearVideojuegoCategoria(CategoriaVideojuegoRequest categoriaVideojuegoRequest) throws SQLException,
+            UserDataInvalidException, EntityAlreadyExistsException {
+        CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
+        categoriaVideojuegoService.crearCategoriaVideojuego(categoriaVideojuegoRequest);
+    }
+
+    public List<CategoriaVideojuego> obtenerCategoriasDeUnVideojuego(int videojuego_id) throws SQLException{
+        CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
+        return categoriaVideojuegoService.obtenerLasCategoriasDeUnVideojuego(videojuego_id);
+    }
     
+    public void eliminarCategoriaDeUnVideojuego(int videojuego_id, int categoria_id) throws SQLException, UserDataInvalidException {
+        CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
+        categoriaVideojuegoService.eliminarCategoriaVideojuego(videojuego_id, categoria_id);
+    }
 }

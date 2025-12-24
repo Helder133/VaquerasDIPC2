@@ -25,7 +25,7 @@ public class EmpresaService {
     public void crearEmpresa(EmpresaRequest empresaRequest) throws UserDataInvalidException, SQLException, EntityAlreadyExistsException {
         Empresa empresa = extraerEmpresa(empresaRequest);
         EmpresaDB empresaDB = new EmpresaDB();
-        if (empresaDB.verificarNombreUnico(empresa.getNombre())) {
+        if (empresaDB.verificarNombreUnico(empresa.getNombre()).isPresent()) {
             throw new EntityAlreadyExistsException(String.format("El nombre: %s, ya esta relacionado con otra empresa", empresa.getNombre()));
         }
         empresaDB.insertar(empresa);
@@ -108,6 +108,15 @@ public class EmpresaService {
     public List<Videojuego> obteneVideojuegosDeLaEmpresa(int code) throws SQLException {
         VideojuegoService videojuegoService = new VideojuegoService();
         return videojuegoService.obtenerTodosLosVideojuegosDeUnaEmpresa(code);
+    }
+    
+    public Empresa obtenerEmpresaPorNombre(String nombre) throws SQLException, UserDataInvalidException {
+        EmpresaDB empresaDB = new EmpresaDB();
+        Optional<Empresa> empresaOptional = empresaDB.verificarNombreUnico(nombre);
+        if (empresaOptional.isEmpty()) {
+            throw new UserDataInvalidException(String.format("La empresa con el nombre: %s, no existe, cree primero la empresa y luego la relaciona con el usuario", nombre));
+        }
+        return empresaOptional.get();
     }
     
 }

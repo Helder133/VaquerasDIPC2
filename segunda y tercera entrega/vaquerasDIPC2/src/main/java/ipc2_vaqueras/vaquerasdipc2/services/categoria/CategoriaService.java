@@ -23,7 +23,7 @@ public class CategoriaService {
     public void crearCategoria(CategoriaRequest categoriaRequest) throws UserDataInvalidException, SQLException, EntityAlreadyExistsException {
         Categoria categoria = extraerCategoria(categoriaRequest);
         CategoriaDB categoriaDB = new CategoriaDB();
-        if (categoriaDB.verificarNuevoNombre(categoriaRequest.getNombre())) {
+        if (categoriaDB.verificarNuevoNombre(categoriaRequest.getNombre()).isPresent()) {
             throw new EntityAlreadyExistsException(String.format("El nombre: %s, ya esta relacionada con otra categoria", categoria.getNombre()));
         }
         categoriaDB.insertar(categoria);

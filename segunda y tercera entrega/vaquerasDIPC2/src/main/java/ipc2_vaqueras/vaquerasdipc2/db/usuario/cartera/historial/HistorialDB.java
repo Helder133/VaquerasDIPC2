@@ -24,7 +24,7 @@ import java.util.Optional;
 public class HistorialDB implements CRUD<Historial> {
 
     private static final String INSERTAR_HISTORIAL = "INSERT INTO historial_cartera (cartera_id, transaccion, fecha, monto) VALUES (?, ?, ?, ?)";
-    private static final String SELECCIONAR_HISTORIAL= "SELECT * FROM historial_cartera WHERE cartera_id = ?";
+    private static final String SELECCIONAR_HISTORIAL= "select h.historial_id, h.cartera_id, h.transaccion, h.fecha, h.monto from usuario u left join cartera_digital c on u.usuario_id = c.usuario_id left join historial_cartera h on c.cartera_id = h.cartera_id where u.usuario_id = ? order by h.fecha desc";
     private static final String ELIMINAR_HISTORIAL = "DELETE FROM historial_cartera WHERE cartera_id = ?";
     
     public boolean validarMinimoUnHistorial(int cartera_id, Connection connection) throws SQLException {
@@ -57,11 +57,11 @@ public class HistorialDB implements CRUD<Historial> {
         }
     }
     
-    public List<Historial> obtenerHistorial(int cartera_id) throws SQLException {
+    public List<Historial> obtenerHistorial(int usuario_id) throws SQLException {
         List<Historial> historials = new ArrayList<>();
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_HISTORIAL)) {
-            select.setInt(1, cartera_id);
+            select.setInt(1, usuario_id);
             
             ResultSet resultSet = select.executeQuery();
 
@@ -69,7 +69,7 @@ public class HistorialDB implements CRUD<Historial> {
                 Historial historial = new Historial(
                         resultSet.getInt("cartera_id"),
                         EnumHistorial.valueOf(resultSet.getString("transaccion")),
-                        resultSet.getDate("fehca").toLocalDate(),
+                        resultSet.getDate("fecha").toLocalDate(),
                         resultSet.getFloat("monto")
                 );
                 historial.setHistorial_id(resultSet.getInt("historial_id"));

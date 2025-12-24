@@ -14,6 +14,8 @@ import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.Cartera;
+import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.historial.Historial;
+import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.historial.HistorialResponse;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.UsuarioService;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.UriInfo;
@@ -73,15 +75,15 @@ public class UsuarioResource {
             return Response.ok(new UsuarioResponse(existingUser)).build();
         } catch (NumberFormatException e) {
             return obtenerUsuariosPorString(code);
-            
+
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
-        } 
+        }
     }
-    
+
     @GET
     @Path("/cartera/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -92,7 +94,26 @@ public class UsuarioResource {
             return Response.ok(new CarteraResponse(cartera)).build();
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @GET    
+    @Path("/cartera/historial/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerHistorial(@PathParam("id") int id) {
+        try {
+            UsuarioService usuarioService = new UsuarioService();
+            List<HistorialResponse> historials = usuarioService.obtenerHistorialDeUsuario(id)
+                    .stream()
+                    .map(HistorialResponse::new)
+                    .toList();
+            return Response.ok(historials).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
@@ -109,10 +130,10 @@ public class UsuarioResource {
             return Response.ok(usuarios).build();
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
-        } 
+        }
     }
 
     @POST
@@ -125,7 +146,8 @@ public class UsuarioResource {
             @FormDataParam("telefono") String telefono,
             @FormDataParam("avatar") InputStream avatarInput,
             @FormDataParam("avatar") FormDataContentDisposition fileDetail,
-            @FormDataParam("pais") String pais) {
+            @FormDataParam("pais") String pais,
+            @FormDataParam("nombreEmpresa") String nombreEmpresa) {
         UsuarioService usuarioService = new UsuarioService();
         UsuarioRequest usuarioRequest = new UsuarioRequest();
         byte[] foto = null;
@@ -142,21 +164,22 @@ public class UsuarioResource {
             usuarioRequest.setTelefono(telefono);
             usuarioRequest.setAvatar(foto);
             usuarioRequest.setPais(pais);
-
+            usuarioRequest.setNombreEmpresa(nombreEmpresa);
+            
             usuarioService.crearUsuario(usuarioRequest);
             return Response.ok().build();
         } catch (UserDataInvalidException | IOException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (EntityAlreadyExistsException e) {
             return errorEjecucion(e.getMessage(), 2);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
 
     }
-            
+
     @PUT
     @Path("{code}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -175,27 +198,27 @@ public class UsuarioResource {
             if (avatarInput != null && fileDetail != null) {
                 foto = avatarInput.readAllBytes();
             }
-            
+
             usuarioUpdate.setNombre(nombre);
             usuarioUpdate.setContraseña(contraseña);
             usuarioUpdate.setFecha_nacimiento(LocalDate.parse(fecha_nacimiento));
             usuarioUpdate.setTelefono(telefono);
             usuarioUpdate.setAvatar(foto);
             usuarioUpdate.setPais(pais);
-            
+
             usuarioService.editarUsuario(code, usuarioUpdate);
             return Response.ok().build();
         } catch (UserDataInvalidException | IOException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (EntityAlreadyExistsException e) {
             return errorEjecucion(e.getMessage(), 2);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
-        } 
+        }
     }
-    
+
     @PUT
     @Path("/cartera")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -206,12 +229,12 @@ public class UsuarioResource {
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-
+    
     @DELETE
     @Path("{code}")
     public Response deleteUser(@PathParam("code") int code) {
@@ -221,10 +244,10 @@ public class UsuarioResource {
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-            
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
-        } 
+        }
     }
 
     private Response errorEjecucion(String mensaje, int tipo) {
@@ -237,15 +260,15 @@ public class UsuarioResource {
             }
             case 2 -> {
                 return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + mensaje + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             }
             case 3 -> {
                 return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + mensaje + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             }
         }
         return null;

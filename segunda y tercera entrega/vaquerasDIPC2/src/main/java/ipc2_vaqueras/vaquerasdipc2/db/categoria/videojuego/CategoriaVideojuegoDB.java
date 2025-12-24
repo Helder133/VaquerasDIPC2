@@ -22,11 +22,7 @@ import java.util.Optional;
 public class CategoriaVideojuegoDB implements CRUD<CategoriaVideojuego> {
 
     private final static String INSERTAR_CATEGORIA_DE_UN_VIDEOJUEGO = "INSERT INTO categoria_videojuego (videojuego_id, categoria_id) VALUES (?,?)";
-    private final static String SELECCIONAR_LAS_CATEGORIAS_DE_UN_VIDEOJUEGO = "select  c.nombre,"
-            + "	cv.videojuego_id,"
-            + "	cv.categoria_id"
-            + "from categoria c join categoria_videojuego cv on c.categoria_id = cv.categoria_id"
-            + "where cv.videojuego_id = ?;";
+    private final static String SELECCIONAR_LAS_CATEGORIAS_DE_UN_VIDEOJUEGO = "select c.nombre, cv.categoria_id, cv.videojuego_id from categoria c join categoria_videojuego cv on c.categoria_id = cv.categoria_id where cv.videojuego_id = ?";
     private final static String ELIMNAR_CATEGORIAVIDEOJUEGO = "DELETE FROM categoria_videojuego WHERE videojuego_id = ? AND categoria_id = ?";
     private final static String VALIDAR_QUE_YA_EXISTA_CATEGORIA_DE_VIDEOJUEGO = "SELECT * FROM categoria_videojuego WHERE videojuego_id = ? AND categoria_id = ?";
     //private final static String O = "";

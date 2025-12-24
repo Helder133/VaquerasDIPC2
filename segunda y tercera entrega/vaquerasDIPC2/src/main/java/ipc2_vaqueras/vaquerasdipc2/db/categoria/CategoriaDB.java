@@ -33,15 +33,24 @@ public class CategoriaDB implements CRUD<Categoria> {
     private static final String VERIFICAR_NOMBRE_DE_LA_NUEVA_CATEGORIA = "SELECT * FROM categoria WHERE nombre = ?";
     private static final String VERIFICAR_NOMBRE_CON_EL_QUE_SE_VA_ACTUALIZAR = "SELECT * FROM categoria WHERE nombre = ? AND categoria_id <> ?";
 
-    public boolean verificarNuevoNombre(String nombre) throws SQLException {
+    public Optional<Categoria> verificarNuevoNombre(String nombre) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement validar = connection.prepareStatement(VERIFICAR_NOMBRE_DE_LA_NUEVA_CATEGORIA)) {
             validar.setString(1, nombre);
+
             ResultSet resultSet = validar.executeQuery();
-            return resultSet.next();
+            if (resultSet.next()) {
+                Categoria categoria = new Categoria(
+                        resultSet.getString("nombre"),
+                        resultSet.getString("descripcion")
+                );
+                categoria.setCategoria_id(resultSet.getInt("categoria_id"));
+                return Optional.of(categoria);
+            }
+            return Optional.empty();
         }
     }
-    
+
     public boolean verificarNombreAActualizar(String nombre, int id) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement validar = connection.prepareStatement(VERIFICAR_NOMBRE_CON_EL_QUE_SE_VA_ACTUALIZAR)) {

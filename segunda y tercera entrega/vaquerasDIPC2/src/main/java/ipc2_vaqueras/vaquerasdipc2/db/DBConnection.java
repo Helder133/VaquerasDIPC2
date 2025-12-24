@@ -11,7 +11,7 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 /**
  *
- * @author jose
+ * @author helder
  */
 public class DBConnection {
 

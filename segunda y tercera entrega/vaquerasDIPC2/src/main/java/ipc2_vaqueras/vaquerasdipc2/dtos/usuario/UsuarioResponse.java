@@ -28,7 +28,8 @@ public class UsuarioResponse {
     private byte[] avatar;
     private String pais;
     private int empresa_id;
-
+    private String nombreEmpresa;
+    
     public UsuarioResponse(Usuario usuario) {
         this.usuario_id = usuario.getUsuario_id();
         this.nombre = usuario.getNombre();
@@ -40,9 +41,8 @@ public class UsuarioResponse {
         this.avatar = usuario.getAvatar();
         this.pais = usuario.getPais();
         this.empresa_id = usuario.getEmpresa_id();
+        this.nombreEmpresa = usuario.getNombreEmpresa();
     }
-    
-    
 
     public int getUsuario_id() {
         return usuario_id;
@@ -123,6 +123,13 @@ public class UsuarioResponse {
     public void setEmpresa_id(int empresa_id) {
         this.empresa_id = empresa_id;
     }
-    
+
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
+    }
     
 }

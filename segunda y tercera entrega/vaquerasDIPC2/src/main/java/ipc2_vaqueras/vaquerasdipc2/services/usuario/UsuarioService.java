@@ -12,10 +12,13 @@ import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.UsuarioUpdate;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
+import ipc2_vaqueras.vaquerasdipc2.models.empresa.Empresa;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Login;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.Cartera;
+import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.historial.Historial;
+import ipc2_vaqueras.vaquerasdipc2.services.empresa.EmpresaService;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.cartera.CarteraService;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -77,7 +80,7 @@ public class UsuarioService {
 
     }
 
-    private Usuario extraerUsuario(UsuarioRequest usuarioRequest) throws UserDataInvalidException {
+    private Usuario extraerUsuario(UsuarioRequest usuarioRequest) throws UserDataInvalidException, SQLException {
         try {
             Usuario usuario = new Usuario(
                     usuarioRequest.getNombre(),
@@ -89,6 +92,17 @@ public class UsuarioService {
                     usuarioRequest.getAvatar(),
                     usuarioRequest.getPais()
             );
+            
+            usuario.setNombreEmpresa(usuarioRequest.getNombreEmpresa());
+            if (StringUtils.isNotBlank(usuario.getNombreEmpresa())) {
+                if (usuario.getRol().equals(EnumUsuario.comun) || usuario.getRol().equals(EnumUsuario.admin_sistema)) {
+                    throw new UserDataInvalidException(String.format("Un usuario con rol: %s, no puede estar ligado a una empresa", usuario.getRol()));
+                }
+                EmpresaService empresaService = new EmpresaService();
+                Empresa empresa = empresaService.obtenerEmpresaPorNombre(usuario.getNombreEmpresa());
+                usuario.setEmpresa_id(empresa.getEmpresa_id());
+            }
+            
             if (!usuario.isValid()) {
                 throw new UserDataInvalidException("Error en los datos enviados, vuelva a intentar");
             }
@@ -196,5 +210,10 @@ public class UsuarioService {
     public void depositarEnCartera(CarteraUpdate carteraUpdate) throws SQLException, UserDataInvalidException {
         CarteraService carteraService = new CarteraService();
         carteraService.actualizarCarteraDeposito(carteraUpdate);
+    }
+    
+    public List<Historial> obtenerHistorialDeUsuario(int usuario_id) throws SQLException, UserDataInvalidException {
+        CarteraService carteraService = new CarteraService();
+        return carteraService.obtenerHistorialDeUsuario(usuario_id);
     }
 }

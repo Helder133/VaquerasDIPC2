@@ -4,6 +4,8 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author helder
@@ -41,6 +43,11 @@ public class CategoriaVideojuego {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+    
+    public boolean isValid () {
+        return StringUtils.isNotBlank(nombre)
+                && videojuego_id > 0;
     }
     
 }

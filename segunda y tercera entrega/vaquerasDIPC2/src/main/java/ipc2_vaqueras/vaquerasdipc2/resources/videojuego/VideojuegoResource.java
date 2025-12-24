@@ -4,10 +4,13 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.resources.videojuego;
 
+import ipc2_vaqueras.vaquerasdipc2.dtos.categoria.videojuego.CategoriaVideojuegoRequest;
+import ipc2_vaqueras.vaquerasdipc2.dtos.categoria.videojuego.CategoriaVideojuegoResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaResponse;
 import ipc2_vaqueras.vaquerasdipc2.dtos.multimedia.MultimediaUpdate;
 import ipc2_vaqueras.vaquerasdipc2.dtos.videojuego.VideojuegoResponse;
+import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
@@ -29,8 +32,6 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -256,6 +257,55 @@ public class VideojuegoResource {
         }
     }
     
+    //Categoria
+    @POST
+    @Path("/categoria")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response crearVideojuegoCategoria(CategoriaVideojuegoRequest categoriaVideojuegoRequest) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            videojuegoService.crearVideojuegoCategoria(categoriaVideojuegoRequest);
+            return Response.ok().build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (EntityAlreadyExistsException e) {
+            return errorEjecucion(e.getMessage(), 2);
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @GET
+    @Path("/categoria/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerCategoriasDeUnVideojuego(@PathParam("id") int id){
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            List<CategoriaVideojuegoResponse> categoriasDeVideojuego = videojuegoService.obtenerCategoriasDeUnVideojuego(id)
+                    .stream()
+                    .map(CategoriaVideojuegoResponse::new)
+                    .toList();
+            return Response.ok(categoriasDeVideojuego).build();
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @DELETE
+    @Path("{videojuego_id}/categoria/{categoria_id}")
+    public Response eleiminarCategoriaDeUnVideojuego(@PathParam("videojuego_id") int videojuego_id, @PathParam("categoria_id") int categoria_id) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            videojuegoService.eliminarCategoriaDeUnVideojuego(videojuego_id, categoria_id);
+            return Response.ok().build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
     
     private Response errorEjecucion(String mensaje, int tipo) {
         switch (tipo) {

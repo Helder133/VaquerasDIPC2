@@ -25,21 +25,23 @@ import org.apache.commons.lang3.StringUtils;
  * @author helder
  */
 public class UsuarioDB implements CRUD<Usuario> {
+
     //querys principales CRUD
-    private static final String INSERTAR_NUEVO_USUARIO = "INSERT INTO usuario (nombre, email, contraseña, fecha_nacimiento, rol, telefono, avatar, pais) VALUES (?,?,?,?,?,?,?,?)";
+    private static final String INSERTAR_NUEVO_USUARIO_COMUN = "INSERT INTO usuario (nombre, email, contraseña, fecha_nacimiento, rol, telefono, avatar, pais) VALUES (?,?,?,?,?,?,?,?)";
+    private static final String INSERTAR_NUEVO_USUARIO_CON_EMPRESA = "INSERT INTO usuario (nombre, email, contraseña, fecha_nacimiento, rol, telefono, avatar, pais, empresa_id) VALUES (?,?,?,?,?,?,?,?,?)";
     private static final String ACTUALIZAR_USUARIO_SIN_CONTRASEÑA = "UPDATE usuario SET nombre = ?, fecha_nacimiento = ?, telefono = ?, avatar = ?, pais = ? WHERE usuario_id = ?";
     private static final String ACTUALIZAR_USUARIO_CON_CONTRASEÑA = "UPDATE usuario SET nombre = ?, contraseña = ?, fecha_nacimiento = ?, telefono = ?, avatar = ?, pais = ? WHERE usuario_id = ?";
-    private static final String SELECCIONAR_TODO_LOS_USUARIO = "SELECT * FROM usuario";
-    private static final String SELECCIONAR_USUARIO_POR_INT = "SELECT * FROM usuario WHERE usuario_id = ?";
-    private static final String SELECCIONAR_USUARIO_POR_STRING = "SELECT * FROM usuario WHERE nombre LIKE ?";
+    private static final String SELECCIONAR_TODO_LOS_USUARIO = "select u.usuario_id, u.nombre, u.email, u.contraseña, u.fecha_nacimiento, u.rol, u.telefono, u.avatar, u.pais, u.empresa_id, e.nombre AS empresa_nombre from usuario u left join empresa e on u.empresa_id = e.empresa_id";
+    private static final String SELECCIONAR_USUARIO_POR_INT = "select u.usuario_id, u.nombre, u.email, u.contraseña, u.fecha_nacimiento, u.rol, u.telefono, u.avatar, u.pais, u.empresa_id, e.nombre AS empresa_nombre from usuario u left join empresa e on u.empresa_id = e.empresa_id WHERE u.usuario_id = ?";
+    private static final String SELECCIONAR_USUARIO_POR_STRING = "select u.usuario_id, u.nombre, u.email, u.contraseña, u.fecha_nacimiento, u.rol, u.telefono, u.avatar, u.pais, u.empresa_id, e.nombre AS empresa_nombre from usuario u left join empresa e on u.empresa_id = e.empresa_id WHERE u.nombre LIKE ?";
     private static final String ELIMINAR_USUARIO = "DELETE FROM usuario WHERE usuario_id = ?";
-    
+
     //querys auxiliares
     private static final String LOGIN = "SELECT * FROM usuario WHERE email = ? AND contraseña = ?";
     private static final String VALIDAR_EMAIL = "SELECT * FROM usuario WHERE email = ?";
     private static final String VALIDAR_TELEFONO = "SELECT * FROM usuario WHERE telefono = ?";
     private static final String VALIDAR_NUEVO_TELEFONO = "SELECT * FROM usuario WHERE telefono = ? AND usuario_id <> ?";
-    
+
     public Optional<Usuario> login(Login login) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement userlogin = connection.prepareStatement(LOGIN)) {
@@ -58,6 +60,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
+                usuario.setNombreEmpresa(resultSet.getString("empresa_nombre"));
                 usuario.setUsuario_id(resultSet.getInt("Usuario_Id"));
 
                 return Optional.of(usuario);
@@ -83,6 +86,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
+                usuario.setNombreEmpresa(resultSet.getString("empresa_nombre"));
                 usuario.setUsuario_id(resultSet.getInt("Usuario_Id"));
 
                 return Optional.of(usuario);
@@ -90,50 +94,74 @@ public class UsuarioDB implements CRUD<Usuario> {
         }
         return Optional.empty();
     }
-    
-    public boolean validarTelefono(String telefono) throws SQLException{
+
+    public boolean validarTelefono(String telefono) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
-        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_TELEFONO)){
+        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_TELEFONO)) {
             validarTelefono.setString(1, telefono);
             ResultSet resultSet = validarTelefono.executeQuery();
             return resultSet.next();
         }
     }
-    
-    public boolean validarTelefonoNuevo(String telefono, int id) throws SQLException{
+
+    public boolean validarTelefonoNuevo(String telefono, int id) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
-        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_NUEVO_TELEFONO)){
+        try (PreparedStatement validarTelefono = connection.prepareStatement(VALIDAR_NUEVO_TELEFONO)) {
             validarTelefono.setString(1, telefono);
             validarTelefono.setInt(2, id);
             ResultSet resultSet = validarTelefono.executeQuery();
             return resultSet.next();
         }
     }
-    
+
     //metodo de insertar con transaccion
     public int insertar(Usuario t, Connection connection) throws SQLException {
-        try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO, Statement.RETURN_GENERATED_KEYS)) {
-            insert.setString(1, t.getNombre());
-            insert.setString(2, t.getEmail());
-            insert.setString(3, t.getContraseña());
-            insert.setDate(4, Date.valueOf(t.getFecha_nacimiento()));
-            insert.setString(5, t.getRol().toString());
-            insert.setString(6, t.getTelefono());
-            insert.setBytes(7, t.getAvatar());
-            insert.setString(8, t.getPais());
+        if (StringUtils.isBlank(t.getNombreEmpresa())) {
+            try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO_COMUN, Statement.RETURN_GENERATED_KEYS)) {
+                insert.setString(1, t.getNombre());
+                insert.setString(2, t.getEmail());
+                insert.setString(3, t.getContraseña());
+                insert.setDate(4, Date.valueOf(t.getFecha_nacimiento()));
+                insert.setString(5, t.getRol().toString());
+                insert.setString(6, t.getTelefono());
+                insert.setBytes(7, t.getAvatar());
+                insert.setString(8, t.getPais());
 
-            insert.executeUpdate();
-            
-            ResultSet resultSet = insert.getGeneratedKeys();
-            if (resultSet.next()) return resultSet.getInt(1);
+                insert.executeUpdate();
+
+                ResultSet resultSet = insert.getGeneratedKeys();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+        } else {
+            try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO_CON_EMPRESA, Statement.RETURN_GENERATED_KEYS)) {
+                insert.setString(1, t.getNombre());
+                insert.setString(2, t.getEmail());
+                insert.setString(3, t.getContraseña());
+                insert.setDate(4, Date.valueOf(t.getFecha_nacimiento()));
+                insert.setString(5, t.getRol().toString());
+                insert.setString(6, t.getTelefono());
+                insert.setBytes(7, t.getAvatar());
+                insert.setString(8, t.getPais());
+                insert.setInt(9, t.getEmpresa_id());
+
+                insert.executeUpdate();
+
+                ResultSet resultSet = insert.getGeneratedKeys();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
         }
+
         throw new SQLException("No se puedo crear el usuario");
     }
-    
+
     @Override
     public void insertar(Usuario t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
-        try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO)) {
+        try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVO_USUARIO_COMUN)) {
             insert.setString(1, t.getNombre());
             insert.setString(2, t.getEmail());
             insert.setString(3, t.getContraseña());
@@ -196,6 +224,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
+                usuario.setNombreEmpresa(resultSet.getString("empresa_nombre"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 usuarios.add(usuario);
             }
@@ -222,6 +251,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
+                usuario.setNombreEmpresa(resultSet.getString("empresa_nombre"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 return Optional.of(usuario);
             }
@@ -253,6 +283,7 @@ public class UsuarioDB implements CRUD<Usuario> {
                         resultSet.getString("pais")
                 );
                 usuario.setEmpresa_id(resultSet.getInt("empresa_id"));
+                usuario.setNombreEmpresa(resultSet.getString("empresa_nombre"));
                 usuario.setUsuario_id(resultSet.getInt("usuario_id"));
                 usuarios.add(usuario);
             }
@@ -266,7 +297,7 @@ public class UsuarioDB implements CRUD<Usuario> {
             delete.executeUpdate();
         }
     }
-    
+
     @Override
     public void eliminar(int t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();

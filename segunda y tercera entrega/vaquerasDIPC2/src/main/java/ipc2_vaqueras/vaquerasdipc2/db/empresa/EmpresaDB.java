@@ -19,7 +19,7 @@ import java.util.Optional;
  *
  * @author helder
  */
-public class EmpresaDB   implements CRUD<Empresa> {
+public class EmpresaDB implements CRUD<Empresa> {
 
     //querys principales
     private static final String INSERTAR_NUEVA_EMPRESA = "INSERT INTO empresa (nombre, descripcion, comision_negociada, estado) VALUES (?,?,?,?)";
@@ -31,30 +31,40 @@ public class EmpresaDB   implements CRUD<Empresa> {
      * private static final String ELIMINAR_EMPRESA = "DELETE FROM empresa WHERE empresa_id = ?";
      * no tiene logica eliminar una empresa si no se puede eliminar un videojuego,
      * ya que un videojuego o varios videojuegos estan relacionadas con una empresa.
-    */
+     */
     //querys auxiliares
     private static final String VERIFICAR_NOMBRE_UNICO = "SELECT * FROM empresa WHERE nombre = ?";
     private static final String VERIFICAR_NUEVO_NOMBRE = "SELECT * FROM empresa WHERE nombre = ? AND empresa_id <> ?";
-    
-    public boolean verificarNombreUnico (String nombre) throws SQLException {
+
+    public Optional<Empresa> verificarNombreUnico(String nombre) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
-        try (PreparedStatement verificarNombre = connection.prepareStatement(VERIFICAR_NOMBRE_UNICO)){
+        try (PreparedStatement verificarNombre = connection.prepareStatement(VERIFICAR_NOMBRE_UNICO)) {
             verificarNombre.setString(1, nombre);
             ResultSet resultSet = verificarNombre.executeQuery();
-            return resultSet.next();
+            if (resultSet.next()) {
+                Empresa empresa = new Empresa(
+                        resultSet.getString("nombre"),
+                        resultSet.getString("descripcion"),
+                        resultSet.getFloat("comision_negociada")
+                );
+                empresa.setEstado(resultSet.getBoolean("estado"));
+                empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
+                return Optional.of(empresa);
+            }
+            return Optional.empty();
         }
     }
-    
-    public boolean verificarNuevoNombre (String nombre, int id) throws SQLException {
+
+    public boolean verificarNuevoNombre(String nombre, int id) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
-        try (PreparedStatement verificarNombre = connection.prepareStatement(VERIFICAR_NUEVO_NOMBRE)){
+        try (PreparedStatement verificarNombre = connection.prepareStatement(VERIFICAR_NUEVO_NOMBRE)) {
             verificarNombre.setString(1, nombre);
             verificarNombre.setInt(2, id);
             ResultSet resultSet = verificarNombre.executeQuery();
             return resultSet.next();
         }
     }
-    
+
     @Override
     public void insertar(Empresa t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
@@ -77,7 +87,7 @@ public class EmpresaDB   implements CRUD<Empresa> {
             update.setFloat(3, t.getComision_negociada());
             update.setBoolean(4, t.isEstado());
             update.setInt(5, t.getEmpresa_id());
-            
+
             update.executeUpdate();
         }
     }
@@ -136,7 +146,7 @@ public class EmpresaDB   implements CRUD<Empresa> {
         int contador = 0;
         try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_EMPRESA_POR_STRING)) {
             select.setString(1, "%" + t + "%");
-            
+
             ResultSet resultSet = select.executeQuery();
             while (resultSet.next() && contador <= max) {
                 contador++;
@@ -163,6 +173,6 @@ public class EmpresaDB   implements CRUD<Empresa> {
             delete.setInt(1, t);
             delete.executeUpdate();
         }
-        */
+         */
     }
 }

@@ -25,6 +25,7 @@ public class UsuarioRequest {
     private String telefono;
     private byte[] avatar;
     private String pais;
+    private String nombreEmpresa;
 
     public String getNombre() {
         return nombre;
@@ -88,6 +89,14 @@ public class UsuarioRequest {
 
     public void setPais(String pais) {
         this.pais = pais;
+    }
+
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
     }
     
 }

@@ -6,6 +6,7 @@ package ipc2_vaqueras.vaquerasdipc2.services.usuario.cartera;
 
 import ipc2_vaqueras.vaquerasdipc2.db.DBConnection;
 import ipc2_vaqueras.vaquerasdipc2.db.usuario.cartera.CarteraDB;
+import ipc2_vaqueras.vaquerasdipc2.db.usuario.cartera.historial.HistorialDB;
 import ipc2_vaqueras.vaquerasdipc2.dtos.usuario.cartera.CarteraUpdate;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
@@ -16,6 +17,7 @@ import ipc2_vaqueras.vaquerasdipc2.services.usuario.cartera.historial.HistorialS
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -60,7 +62,7 @@ public class CarteraService {
             Historial historial = new Historial(carteraOpt.get().getCartera_id(), EnumHistorial.deposito, LocalDate.now(), carteraN.getSaldo());
             historialService.crearHitorial(historial, connection);
 
-            carteraDB.actualizar(carteraOpt.get(),connection);
+            carteraDB.actualizar(carteraOpt.get(), connection);
 
             connection.commit();
         } catch (UserDataInvalidException | SQLException e) {
@@ -98,13 +100,21 @@ public class CarteraService {
         CarteraDB carteraDB = new CarteraDB();
         Optional<Cartera> carteraOpt = carteraDB.seleccionarPorParametro(usuario_id);
         HistorialService historialService = new HistorialService();
-        
+
         if (historialService.isExisteHistorial(carteraOpt.get().getCartera_id(), connection)) {
             historialService.eliminarHistorial(carteraOpt.get().getCartera_id(), connection);
         }
         if (carteraDB.validarUnicoUsuario(usuario_id)) {
             carteraDB.eliminar(usuario_id, connection);
         }
+    }
+
+    public List<Historial> obtenerHistorialDeUsuario(int usuario_id) throws SQLException, UserDataInvalidException {
+        if (!validarUnicaCartera(usuario_id)) {
+            throw new UserDataInvalidException("El usuario no cuenta con una cartera digital, por lo tanto no tiene un historial");
+        }
+        HistorialDB historialDB = new HistorialDB();
+        return historialDB.obtenerHistorial(usuario_id);
     }
 
 }

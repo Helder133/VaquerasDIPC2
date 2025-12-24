@@ -21,9 +21,9 @@ public class HistorialService {
         historialDB.insertar(historial, connection);
     } 
     
-    public List<Historial> obtenerHistorial(int cartera_id) throws SQLException {
+    public List<Historial> obtenerHistorial(int usuario_id) throws SQLException {
         HistorialDB historialDB = new HistorialDB();
-        return historialDB.obtenerHistorial(cartera_id);
+        return historialDB.obtenerHistorial(usuario_id);
     }
     
     public void eliminarHistorial(int cartera_id, Connection connection) throws SQLException {
