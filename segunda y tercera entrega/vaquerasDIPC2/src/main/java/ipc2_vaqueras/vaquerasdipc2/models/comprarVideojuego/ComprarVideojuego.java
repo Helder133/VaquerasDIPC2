@@ -15,6 +15,11 @@ public class ComprarVideojuego {
     private int videojuego_id;
     private int usuario_id;
     private LocalDate fecha;
+    private int empresa_id;
+    private String nombreEmpresa;
+    private String nombreVideojuego;
+    private String descripcion;
+    private byte [] imagen;
 
     public ComprarVideojuego(int videojuego_id, int usuario_id, LocalDate fecha) {
         this.videojuego_id = videojuego_id;
@@ -44,6 +49,46 @@ public class ComprarVideojuego {
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public int getEmpresa_id() {
+        return empresa_id;
+    }
+
+    public void setEmpresa_id(int empresa_id) {
+        this.empresa_id = empresa_id;
+    }
+
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
+    }
+
+    public String getNombreVideojuego() {
+        return nombreVideojuego;
+    }
+
+    public void setNombreVideojuego(String nombreVideojuego) {
+        this.nombreVideojuego = nombreVideojuego;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public byte[] getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public boolean isValid() {

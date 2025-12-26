@@ -4,6 +4,9 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import java.time.LocalDate;
 
 /**
@@ -15,11 +18,13 @@ public class BibliotecaVideojuego {
     private int biblioteca_id;
     private int videojuego_id;
     private int usuario_id;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate fecha;
-    private boolean estado;
-    private String nombre;
-    private String recursoMinimo;
-    private int edadMinima;
+    private boolean estado_instalacion;
+    private String nombreVideojuego;
+    private String nombreEmpresa;
+    private String descripcion;
     private byte[] imagen;
     
     
@@ -27,7 +32,7 @@ public class BibliotecaVideojuego {
         this.videojuego_id = videojuego_id;
         this.usuario_id = usuario_id;
         this.fecha = fecha;
-        this.estado = estado;
+        this.estado_instalacion = estado;
     }
 
     public int getBiblioteca_id() {
@@ -62,36 +67,36 @@ public class BibliotecaVideojuego {
         this.fecha = fecha;
     }
 
-    public boolean isEstado() {
-        return estado;
+    public boolean isEstado_instalacion() {
+        return estado_instalacion;
     }
 
-    public void setEstado(boolean estado) {
-        this.estado = estado;
+    public void setEstado_instalacion(boolean estado_instalacion) {
+        this.estado_instalacion = estado_instalacion;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreVideojuego() {
+        return nombreVideojuego;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreVideojuego(String nombreVideojuego) {
+        this.nombreVideojuego = nombreVideojuego;
     }
 
-    public String getRecursoMinimo() {
-        return recursoMinimo;
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
     }
 
-    public void setRecursoMinimo(String recursoMinimo) {
-        this.recursoMinimo = recursoMinimo;
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
     }
 
-    public int getEdadMinima() {
-        return edadMinima;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setEdadMinima(int edadMinima) {
-        this.edadMinima = edadMinima;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public byte[] getImagen() {

@@ -27,6 +27,7 @@ public class VideojuegoResponse {
     private LocalDate fecha;
     private byte[] imagen;
     private String descripcion;
+    private String nombre_empresa;
     
     public VideojuegoResponse(Videojuego videojuego){
         this.videojuego_id = videojuego.getVideojuego_id();
@@ -39,6 +40,7 @@ public class VideojuegoResponse {
         this.fecha = videojuego.getFecha();
         this.imagen = videojuego.getImagen();
         this.descripcion = videojuego.getDescripcion();
+        this.nombre_empresa = videojuego.getNombre_empresa();
     }
 
     public int getVideojuego_id() {
@@ -121,4 +123,11 @@ public class VideojuegoResponse {
         this.descripcion = descripcion;
     }
     
+    public String getNombre_empresa() {
+        return nombre_empresa;
+    }
+
+    public void setNombre_empresa(String nombre_empresa) {
+        this.nombre_empresa = nombre_empresa;
+    }
 }

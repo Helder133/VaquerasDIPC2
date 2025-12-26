@@ -54,7 +54,7 @@ public class CarteraService {
 
             Optional<Cartera> carteraOpt = carteraDB.seleccionarPorParametro(carteraN.getUsuario_id());
             if (carteraOpt.isEmpty()) {
-                throw new UserDataInvalidException("No se pudo encontrar la cartera soliciatada");
+                throw new UserDataInvalidException("No se pudo encontrar su cartera");
             }
             float total = carteraOpt.get().getSaldo() + carteraN.getSaldo();
             carteraOpt.get().setSaldo(total);
@@ -78,10 +78,33 @@ public class CarteraService {
         }
     }
 
+    public void actualizarCarteraPago(CarteraUpdate carteraUpdate, Connection connection) throws SQLException, UserDataInvalidException {
+        Cartera cartera = extraerCartera(carteraUpdate);
+        CarteraDB carteraDB = new CarteraDB();
+        Optional<Cartera> carteraOpt = carteraDB.seleccionarPorParametro(cartera.getUsuario_id());
+        if (carteraOpt.isEmpty()) {
+            throw new UserDataInvalidException("No se pudo encontrar su cartera");
+        }
+        
+        if (carteraOpt.get().getSaldo() < cartera.getSaldo() ) {
+            throw new UserDataInvalidException("No cuenta con fondos suficientes para comprar el juego, necesita recargar antes");
+        }
+        
+        float total = carteraOpt.get().getSaldo() - cartera.getSaldo();
+        carteraOpt.get().setSaldo(total);
+
+        Historial historial = new Historial(carteraOpt.get().getCartera_id(), EnumHistorial.pago, LocalDate.now(), cartera.getSaldo());
+        HistorialService historialService = new HistorialService();
+        historialService.crearHitorial(historial, connection);
+
+        carteraDB.actualizar(carteraOpt.get(), connection);
+
+    }
+
     private Cartera extraerCartera(CarteraUpdate carteraUpdate) throws UserDataInvalidException {
         Cartera cartera = new Cartera(carteraUpdate.getUsuario_id(), carteraUpdate.getSaldo());
         if (!cartera.isValid()) {
-            throw new UserDataInvalidException("No se puedo procesar el pago, vuleva a intentar");
+            throw new UserDataInvalidException("No se puedo procesar la transaccion, vuleva a intentar");
         }
         return cartera;
 

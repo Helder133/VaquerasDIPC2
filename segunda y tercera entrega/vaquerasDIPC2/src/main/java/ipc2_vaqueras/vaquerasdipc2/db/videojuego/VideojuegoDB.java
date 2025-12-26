@@ -24,10 +24,10 @@ public class VideojuegoDB implements CRUD<Videojuego> {
 
     private final static String INSERTAR_VIDEOJUEGO = "INSERT INTO videojuego (empresa_id, nombre, precio, recurso_minimo, edad_minima, estado, fecha, imagen, descripcion) VALUES (?,?,?,?,?,?,?,?,?)";
     private final static String EDITAR_VIDEOJUEGO = "UPDATE videojuego SET nombre = ?, precio = ?, recurso_minimo = ?, edad_minima = ?, estado = ?, imagen = ?, descripcion = ? WHERE videojuego_id = ?";
-    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS = "SELECT * FROM videojuego";
-    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS_DE_UNA_EMPRESA = "SELECT * FROM videojuego WHERE empresa_id = ?";
-    private final static String SELECCIONAR_VIDEOJUEGO_POR_STRING = "SELECT * FROM videojuego WHERE nombre LIKE ?";
-    private final static String SELECCIONAR_VIDEOJUEGO_POR_INT = "SELECT * FROM videojuego WHERE videojuego_id = ?";
+    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa from videojuego v join empresa e on v.empresa_id = e.empresa_id";
+    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS_DE_UNA_EMPRESA = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa from videojuego v join empresa e on v.empresa_id = e.empresa_id WHERE v.empresa_id = ?";
+    private final static String SELECCIONAR_VIDEOJUEGO_POR_STRING = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa from videojuego v join empresa e on v.empresa_id = e.empresa_id WHERE v.nombre LIKE ?";
+    private final static String SELECCIONAR_VIDEOJUEGO_POR_INT = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa from videojuego v join empresa e on v.empresa_id = e.empresa_id WHERE v.videojuego_id = ?";
     //private final static String ELIMINAR_VIDEOJUEGO="DELETE FROM videojuego WHERE videojuego_id = ?";
 
     public boolean ExisteVideojuego(int t) throws SQLException {
@@ -96,6 +96,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
                         resultSet.getString("descripcion")
                 );
                 videojuego.setVideojuego_id(resultSet.getInt("videojuego_id"));
+                videojuego.setNombre_empresa(resultSet.getString("nombre_empresa"));
                 videojuegos.add(videojuego);
             }
             return videojuegos;
@@ -121,6 +122,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
                         resultSet.getString("descripcion")
                 );
                 videojuego.setVideojuego_id(resultSet.getInt("videojuego_id"));
+                videojuego.setNombre_empresa(resultSet.getString("nombre_empresa"));
                 return Optional.of(videojuego);
             }
             return Optional.empty();
@@ -151,6 +153,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
                         resultSet.getString("descripcion")
                 );
                 videojuego.setVideojuego_id(resultSet.getInt("videojuego_id"));
+                videojuego.setNombre_empresa(resultSet.getString("nombre_empresa"));
                 videojuegos.add(videojuego);
             }
             return videojuegos;
@@ -180,6 +183,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
                         resultSet.getString("descripcion")
                 );
                 videojuego.setVideojuego_id(resultSet.getInt("videojuego_id"));
+                videojuego.setNombre_empresa(resultSet.getString("nombre_empresa"));
                 videojuegos.add(videojuego);
             }
             return videojuegos;

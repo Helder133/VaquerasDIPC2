@@ -56,7 +56,7 @@ create table if not exists videojuego (
 	descripcion varchar(200),
 	constraint fk_empresa2 foreign key (empresa_id) references empresa (empresa_id) 
 );
-
+select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa from videojuego v join empresa e on v.empresa_id = e.empresa_id;
 create table if not exists multimedia (
 	multimedia_id int not null auto_increment primary key,
 	videojuego_id int not null,
@@ -93,7 +93,7 @@ create table if not exists comprar_videojuego (
 	constraint fk_usuario2 foreign key (usuario_id) references usuario (usuario_id)
 );
 
-create table if not exists biblioteca_juego (
+create table if not exists biblioteca_videojuego (
 	biblioteca_id int not null auto_increment primary key,
 	usuario_id int not null,
 	videojuego_id int not null,
@@ -102,6 +102,8 @@ create table if not exists biblioteca_juego (
 	constraint fk_videojuego4 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario3 foreign key (usuario_id) references usuario (usuario_id)
 );
+
+select v.videojuego_id, v.nombre,  
 
 create table if not exists comentario_videojuego (
 	comentario_id int not null auto_increment primary key,

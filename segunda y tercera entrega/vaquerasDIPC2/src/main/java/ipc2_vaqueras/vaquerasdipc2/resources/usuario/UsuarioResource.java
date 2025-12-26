@@ -14,7 +14,6 @@ import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.EnumUsuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.Cartera;
-import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.historial.Historial;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.cartera.historial.HistorialResponse;
 import ipc2_vaqueras.vaquerasdipc2.services.usuario.UsuarioService;
 import jakarta.ws.rs.core.Context;

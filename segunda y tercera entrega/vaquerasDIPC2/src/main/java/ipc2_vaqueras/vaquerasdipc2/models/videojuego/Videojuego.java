@@ -22,6 +22,7 @@ public class Videojuego {
     private LocalDate fecha;
     private byte[] imagen;
     private String descripcion;
+    private String nombre_empresa;
 
     public Videojuego(int empresa_id, String nombre, float precio, String recurso_minimo, int edad_minima, boolean estado, LocalDate fecha, byte[] imagen, String descripcion) {
         this.empresa_id = empresa_id;
@@ -115,6 +116,14 @@ public class Videojuego {
         this.descripcion = descripcion;
     }
     
+    public String getNombre_empresa() {
+        return nombre_empresa;
+    }
+
+    public void setNombre_empresa(String nombre_empresa) {
+        this.nombre_empresa = nombre_empresa;
+    }
+    
     public boolean isValid () {
         return StringUtils.isNotBlank(nombre)
                 && StringUtils.isNotBlank(recurso_minimo)
@@ -123,4 +132,5 @@ public class Videojuego {
                 && edad_minima > 0
                 && fecha != null;
     }
+    
 }

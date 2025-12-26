@@ -212,6 +212,14 @@ public class UsuarioService {
         carteraService.actualizarCarteraDeposito(carteraUpdate);
     }
     
+    public void pagarCartera(int usuario_id, float precioVideojuego, Connection connection) throws SQLException, UserDataInvalidException {
+        CarteraUpdate carteraUpdate = new CarteraUpdate();
+        carteraUpdate.setSaldo(precioVideojuego);
+        carteraUpdate.setUsuario_id(usuario_id);
+        CarteraService carteraService = new CarteraService();
+        carteraService.actualizarCarteraPago(carteraUpdate, connection);
+    }
+    
     public List<Historial> obtenerHistorialDeUsuario(int usuario_id) throws SQLException, UserDataInvalidException {
         CarteraService carteraService = new CarteraService();
         return carteraService.obtenerHistorialDeUsuario(usuario_id);
