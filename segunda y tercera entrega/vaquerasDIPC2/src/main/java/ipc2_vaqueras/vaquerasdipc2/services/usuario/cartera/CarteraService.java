@@ -81,7 +81,7 @@ public class CarteraService {
     public void actualizarCarteraPago(CarteraUpdate carteraUpdate, Connection connection) throws SQLException, UserDataInvalidException {
         Cartera cartera = extraerCartera(carteraUpdate);
         CarteraDB carteraDB = new CarteraDB();
-        Optional<Cartera> carteraOpt = carteraDB.seleccionarPorParametro(cartera.getUsuario_id());
+        Optional<Cartera> carteraOpt = carteraDB.seleccionarPorParametro(cartera.getUsuario_id(), connection);
         if (carteraOpt.isEmpty()) {
             throw new UserDataInvalidException("No se pudo encontrar su cartera");
         }

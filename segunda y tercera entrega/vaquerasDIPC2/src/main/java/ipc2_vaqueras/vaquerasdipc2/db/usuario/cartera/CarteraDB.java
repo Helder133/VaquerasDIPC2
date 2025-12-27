@@ -80,6 +80,23 @@ public class CarteraDB implements CRUD<Cartera> {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public Optional<Cartera> seleccionarPorParametro(int t, Connection connection) throws SQLException {
+        try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_CARTERA)) {
+            select.setInt(1, t);
+
+            ResultSet resultSet = select.executeQuery();
+            if (resultSet.next()) {
+                Cartera cartera = new Cartera(
+                        resultSet.getInt("usuario_id"),
+                        resultSet.getFloat("saldo")
+                );
+                cartera.setCartera_id(resultSet.getInt("cartera_id"));
+                return Optional.of(cartera);
+            }
+        }
+        return Optional.empty();
+    }
+    
     @Override
     public Optional<Cartera> seleccionarPorParametro(int t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();

@@ -91,6 +91,22 @@ public class VideojuegoResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
+    
+    @GET
+    @Path("/noComprado/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerVideojuegoNoComprado(@PathParam("id") int id) {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            List<VideojuegoResponse> videojuegos = videojuegoService.obtenerTodosLosVideojuegosNoComprado(id)
+                    .stream()
+                    .map(VideojuegoResponse::new)
+                    .toList();
+            return Response.ok(videojuegos).build();
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
 
     @GET
     @Path("{code}")

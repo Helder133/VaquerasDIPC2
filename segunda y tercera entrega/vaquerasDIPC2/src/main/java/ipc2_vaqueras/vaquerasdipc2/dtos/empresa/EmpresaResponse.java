@@ -14,15 +14,17 @@ public class EmpresaResponse {
     private int empresa_id;
     private String nombre;
     private String descripcion;
-    private float comision_negociada;
+    private float comisionNegociada;
     private boolean estado;
+    private boolean estadoComentario;
 
     public EmpresaResponse(Empresa empresa) {
         this.empresa_id = empresa.getEmpresa_id();
         this.nombre = empresa.getNombre();
         this.descripcion = empresa.getDescripcion();
-        this.comision_negociada = empresa.getComision_negociada();
+        this.comisionNegociada = empresa.getComisionNegociada();
         this.estado = empresa.isEstado();
+        this.estadoComentario = empresa.isEstadoComentario();
     }
 
     public int getEmpresa_id() {
@@ -49,12 +51,12 @@ public class EmpresaResponse {
         this.descripcion = descripcion;
     }
 
-    public float getComision_negociada() {
-        return comision_negociada;
+    public float getComisionNegociada() {
+        return comisionNegociada;
     }
 
-    public void setComision_negociada(float comision_negociada) {
-        this.comision_negociada = comision_negociada;
+    public void setComisionNegociada(float comisionNegociada) {
+        this.comisionNegociada = comisionNegociada;
     }
 
     public boolean isEstado() {
@@ -63,6 +65,14 @@ public class EmpresaResponse {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+    public boolean isEstadoComentario() {
+        return estadoComentario;
+    }
+
+    public void setEstadoComentario(boolean estadoComentario) {
+        this.estadoComentario = estadoComentario;
     }
     
 }

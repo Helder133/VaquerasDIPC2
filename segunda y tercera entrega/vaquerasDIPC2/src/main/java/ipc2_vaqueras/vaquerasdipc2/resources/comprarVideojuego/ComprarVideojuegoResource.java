@@ -5,6 +5,7 @@
 package ipc2_vaqueras.vaquerasdipc2.resources.comprarVideojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideojuegoRequest;
+import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideojuegoResponse;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.services.comprarVideojuego.ComprarService;
 import jakarta.ws.rs.core.Context;
@@ -13,18 +14,18 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * REST Web Service
  *
  * @author helder
  */
-@Path("ComprarVideojuego")
+@Path("comprarVideojuego")
 public class ComprarVideojuegoResource {
 
     @Context
@@ -46,15 +47,18 @@ public class ComprarVideojuegoResource {
     }
     
     @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public String getXml() {
-        //TODO return proper representation object
-        throw new UnsupportedOperationException();
-    }
-
-    @PUT
-    @Consumes(MediaType.APPLICATION_XML)
-    public void putXml(String content) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response obtenerTodasLasCompras() {
+        try {
+            ComprarService comprarService = new ComprarService();
+            List<ComprarVideojuegoResponse> comprarVideojuegos = comprarService.obtenerTodasLasCompras()
+                    .stream()
+                    .map(ComprarVideojuegoResponse::new)
+                    .toList();
+            return Response.ok(comprarVideojuegos).build();
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
     }
     
     private Response errorEjecucion(String mensaje, int tipo) {

@@ -50,6 +50,7 @@ public class ComprarVideojuegoDB implements CRUD<ComprarVideojuego>{
             return resultSet.next();
         }
     }
+    
     @Override
     public void insertar(ComprarVideojuego t) throws SQLException {
         

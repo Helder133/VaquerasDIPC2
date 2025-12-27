@@ -16,6 +16,8 @@ import ipc2_vaqueras.vaquerasdipc2.services.usuario.UsuarioService;
 import ipc2_vaqueras.vaquerasdipc2.services.videojuego.VideojuegoService;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 /**
@@ -37,6 +39,9 @@ public class ComprarService {
         //obteniendo al usuario y su cartera
         UsuarioService usuarioService = new UsuarioService();
         Usuario usuario = usuarioService.seleccionarUsuarioPorParametro(comprarVideojuego.getUsuario_id());
+        
+        //validar que el usuario tenga la edad permitida para comprar el videojuego
+        validarEdadPermitiva(videojuego.getEdad_minima(), usuario.getFecha_nacimiento());
         
         Connection connection = null;
         try {
@@ -86,5 +91,14 @@ public class ComprarService {
     public List<ComprarVideojuego> obtenerTodasLasCompras() throws SQLException {
         ComprarVideojuegoDB comprarVideojuegoDB = new ComprarVideojuegoDB();
         return comprarVideojuegoDB.seleccionar();
+    }
+
+    private void validarEdadPermitiva(int edad_minima, LocalDate fecha_nacimiento)  throws UserDataInvalidException {
+        LocalDate fechaActual = LocalDate.now();
+        Period period = Period.between(fecha_nacimiento, fechaActual);
+        
+        if (period.getYears() < edad_minima) {
+            throw new UserDataInvalidException("No cuenta con la edad minima requerida para comprar el juego");
+        }
     }
 }

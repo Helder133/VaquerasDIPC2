@@ -10,7 +10,8 @@ create table if not exists empresa (
 	empresa_id int not null auto_increment primary key,
 	nombre varchar(200) not null,
 	descripcion varchar(250),
-	comision_negociada float
+	comision_negociada float,
+	estado_comentario bool default 1
 );
 
 create table if not exists usuario (
@@ -93,6 +94,8 @@ create table if not exists comprar_videojuego (
 	constraint fk_usuario2 foreign key (usuario_id) references usuario (usuario_id)
 );
 
+select c.fecha, c.videojuego_id, c.usuario_id, v.empresa_id, v.nombre as nombre_videojuego, v.imagen, v.descripcion, e.nombre as nombre_empresa from comprar_videojuego c join videojuego v on c.videojuego_id = v.videojuego_id join empresa e on v.empresa_id = e.empresa_id;
+
 create table if not exists biblioteca_videojuego (
 	biblioteca_id int not null auto_increment primary key,
 	usuario_id int not null,
@@ -103,7 +106,7 @@ create table if not exists biblioteca_videojuego (
 	constraint fk_usuario3 foreign key (usuario_id) references usuario (usuario_id)
 );
 
-select v.videojuego_id, v.nombre,  
+select b.biblioteca_id, b.fecha, b.estado_instalacion, b.videojuego_id, b.usuario_id, v.empresa_id, v.nombre as nombre_videojuego, v.imagen, v.descripcion, e.nombre as nombre_empresa from biblioteca_videojuego b join videojuego v on b.videojuego_id = v.videojuego_id join empresa e on v.empresa_id = e.empresa_id where b.usuario_id = ?;  
 
 create table if not exists comentario_videojuego (
 	comentario_id int not null auto_increment primary key,
@@ -114,8 +117,11 @@ create table if not exists comentario_videojuego (
 	fecha_hora datetime not null,
 	comentario_padre int,
 	constraint fk_videojuego5 foreign key (videojuego_id) references videojuego (videojuego_id),
-	constraint fk_usuario4 foreign key (usuario_id) references usuario (usuario_id)
+	constraint fk_usuario4 foreign key (usuario_id) references usuario (usuario_id),
+	ALTER TABLE comentario_videojuego ADD CONSTRAINT fk_comentario_padre FOREIGN KEY (comentario_padre) REFERENCES comentario_videojuego (comentario_id) ON DELETE CASCADE
 );
+
+select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id;
 
 create table if not exists calificacion_videojuego (
 	calificacion_id int not null auto_increment primary key,

@@ -20,7 +20,7 @@ import java.util.List;
 public class BibliotecaVideojuegoService {
 
     public void agregarBiblioteca(ComprarVideojuegoRequest comprarVideojuegoRequest, Connection connection) throws SQLException, UserDataInvalidException {
-        BibliotecaVideojuego bibliotecaVideojuego = new BibliotecaVideojuego(comprarVideojuegoRequest.getUsuario_id(), comprarVideojuegoRequest.getVideojuego_id(), comprarVideojuegoRequest.getFecha(), false);
+        BibliotecaVideojuego bibliotecaVideojuego = new BibliotecaVideojuego(comprarVideojuegoRequest.getVideojuego_id(), comprarVideojuegoRequest.getUsuario_id(), comprarVideojuegoRequest.getFecha(), false);
         if (validarUnicoVideojuego(bibliotecaVideojuego, connection)) {
             throw new UserDataInvalidException("El videojuego seleccionado ya lo tiene en su biblioteca");
         }

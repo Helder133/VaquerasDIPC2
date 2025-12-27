@@ -2,32 +2,42 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego;
+package ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego.BibliotecaVideojuego;
 import java.time.LocalDate;
 
 /**
  *
  * @author helder
  */
-public class BibliotecaVideojuego {
-
+public class BibliotecaVideojuegoResponse {
+    
     private int biblioteca_id;
     private int videojuego_id;
     private int usuario_id;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate fecha;
     private boolean estado_instalacion;
     private String nombreVideojuego;
     private String nombreEmpresa;
     private String descripcion;
     private byte[] imagen;
-    
-    
-    public BibliotecaVideojuego(int videojuego_id, int usuario_id, LocalDate fecha, boolean estado) {
-        this.videojuego_id = videojuego_id;
-        this.usuario_id = usuario_id;
-        this.fecha = fecha;
-        this.estado_instalacion = estado;
+
+    public BibliotecaVideojuegoResponse(BibliotecaVideojuego bibliotecaVideojuego) {
+        this.biblioteca_id = bibliotecaVideojuego.getBiblioteca_id();
+        this.videojuego_id = bibliotecaVideojuego.getVideojuego_id();
+        this.usuario_id = bibliotecaVideojuego.getUsuario_id();
+        this.fecha = bibliotecaVideojuego.getFecha();
+        this.estado_instalacion = bibliotecaVideojuego.isEstado_instalacion();
+        this.nombreVideojuego = bibliotecaVideojuego.getNombreVideojuego();
+        this.nombreEmpresa = bibliotecaVideojuego.getNombreEmpresa();
+        this.descripcion = bibliotecaVideojuego.getDescripcion();
+        this.imagen = bibliotecaVideojuego.getImagen();
     }
 
     public int getBiblioteca_id() {
@@ -101,11 +111,7 @@ public class BibliotecaVideojuego {
     public void setImagen(byte[] imagen) {
         this.imagen = imagen;
     }
-
-    public boolean isValid() {
-        return videojuego_id > 0
-                && usuario_id > 0
-                && fecha != null;
-    }
-
+    
+    
+    
 }

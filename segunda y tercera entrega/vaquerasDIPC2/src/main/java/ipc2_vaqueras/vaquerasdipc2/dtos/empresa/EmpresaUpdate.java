@@ -11,8 +11,9 @@ package ipc2_vaqueras.vaquerasdipc2.dtos.empresa;
 public class EmpresaUpdate {
     private String nombre;
     private String descripcion;
-    private float comision_negociada;
+    private float comisionNegociada;
     private boolean estado;
+    private boolean estadoComentario;
     
     public String getNombre() {
         return nombre;
@@ -30,12 +31,12 @@ public class EmpresaUpdate {
         this.descripcion = descripcion;
     }
 
-    public float getComision_negociada() {
-        return comision_negociada;
+    public float getComisionNegociada() {
+        return comisionNegociada;
     }
 
-    public void setComision_negociada(float comision_negociada) {
-        this.comision_negociada = comision_negociada;
+    public void setComisionNegociada(float comisionNegociada) {
+        this.comisionNegociada = comisionNegociada;
     }
 
     public boolean isEstado() {
@@ -44,6 +45,14 @@ public class EmpresaUpdate {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+    public boolean isEstadoComentario() {
+        return estadoComentario;
+    }
+
+    public void setEstadoComentario(boolean estadoComentario) {
+        this.estadoComentario = estadoComentario;
     }
     
 }

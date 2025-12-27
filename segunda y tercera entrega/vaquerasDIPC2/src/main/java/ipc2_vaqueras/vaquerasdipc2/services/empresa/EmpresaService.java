@@ -37,7 +37,7 @@ public class EmpresaService {
             Empresa empresa = new Empresa(
                     empresaRequest.getNombre(),
                     empresaRequest.getDescripcion(),
-                    empresaRequest.getComision_negociada()
+                    empresaRequest.getComisionNegociada()
             );
             
             if (!empresa.isValid()) {
@@ -64,9 +64,10 @@ public class EmpresaService {
             Empresa empresa = new Empresa(
                     empresaUpdate.getNombre(),
                     empresaUpdate.getDescripcion(),
-                    empresaUpdate.getComision_negociada()
+                    empresaUpdate.getComisionNegociada()
             );
             empresa.setEstado(empresaUpdate.isEstado());
+            empresa.setEstadoComentario(empresaUpdate.isEstadoComentario());
             if (!empresa.isValid()) {
                 throw new UserDataInvalidException("Error en los datos enviados, vuelva a intentar");
             }

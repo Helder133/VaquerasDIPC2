@@ -54,6 +54,11 @@ public class VideojuegoService {
         return videojuegoDB.seleccionar();
     }
 
+    public List<Videojuego> obtenerTodosLosVideojuegosNoComprado(int usuario_id) throws SQLException {
+        VideojuegoDB videojuegoDB = new VideojuegoDB();
+        return videojuegoDB.seleccionar(usuario_id);
+    }
+    
     public List<Videojuego> obtenerTodosLosVideojuegosDeUnaEmpresa(int empresa_id) throws SQLException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return videojuegoDB.seleccionarPorEmpresa(empresa_id);

@@ -23,7 +23,7 @@ public class EmpresaDB implements CRUD<Empresa> {
 
     //querys principales
     private static final String INSERTAR_NUEVA_EMPRESA = "INSERT INTO empresa (nombre, descripcion, comision_negociada, estado) VALUES (?,?,?,?)";
-    private static final String ACTUALIZAR_EMPRESA = "UPDATE empresa SET nombre = ?, descripcion = ?, comision_negociada = ?, estado = ? WHERE empresa_id = ?";
+    private static final String ACTUALIZAR_EMPRESA = "UPDATE empresa SET nombre = ?, descripcion = ?, comision_negociada = ?, estado = ?, estado_comentario = ? WHERE empresa_id = ?";
     private static final String SELECCIONAR_TODAS_LAS_EMPRESAS = "SELECT * FROM empresa";
     private static final String SELECCIONAR_EMPRESA_POR_INT = "SELECT * FROM empresa WHERE empresa_id = ?";
     private static final String SELECCIONAR_EMPRESA_POR_STRING = "SELECT * FROM empresa WHERE nombre like ?";
@@ -48,6 +48,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getFloat("comision_negociada")
                 );
                 empresa.setEstado(resultSet.getBoolean("estado"));
+                empresa.setEstadoComentario(resultSet.getBoolean("estado_comentario"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 return Optional.of(empresa);
             }
@@ -71,7 +72,7 @@ public class EmpresaDB implements CRUD<Empresa> {
         try (PreparedStatement insert = connection.prepareStatement(INSERTAR_NUEVA_EMPRESA)) {
             insert.setString(1, t.getNombre());
             insert.setString(2, t.getDescripcion());
-            insert.setFloat(3, t.getComision_negociada());
+            insert.setFloat(3, t.getComisionNegociada());
             insert.setBoolean(4, t.isEstado());
 
             insert.executeUpdate();
@@ -84,9 +85,10 @@ public class EmpresaDB implements CRUD<Empresa> {
         try (PreparedStatement update = connection.prepareStatement(ACTUALIZAR_EMPRESA)) {
             update.setString(1, t.getNombre());
             update.setString(2, t.getDescripcion());
-            update.setFloat(3, t.getComision_negociada());
+            update.setFloat(3, t.getComisionNegociada());
             update.setBoolean(4, t.isEstado());
-            update.setInt(5, t.getEmpresa_id());
+            update.setBoolean(5, t.isEstadoComentario());
+            update.setInt(6, t.getEmpresa_id());
 
             update.executeUpdate();
         }
@@ -109,6 +111,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getFloat("comision_negociada")
                 );
                 empresa.setEstado(resultSet.getBoolean("estado"));
+                empresa.setEstadoComentario(resultSet.getBoolean("estado_comentario"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 empresas.add(empresa);
             }
@@ -130,6 +133,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getFloat("comision_negociada")
                 );
                 empresa.setEstado(resultSet.getBoolean("estado"));
+                empresa.setEstadoComentario(resultSet.getBoolean("estado_comentario"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 return Optional.of(empresa);
             }
@@ -156,6 +160,7 @@ public class EmpresaDB implements CRUD<Empresa> {
                         resultSet.getFloat("comision_negociada")
                 );
                 empresa.setEstado(resultSet.getBoolean("estado"));
+                empresa.setEstadoComentario(resultSet.getBoolean("estado_comentario"));
                 empresa.setEmpresa_id(resultSet.getInt("empresa_id"));
                 empresas.add(empresa);
             }

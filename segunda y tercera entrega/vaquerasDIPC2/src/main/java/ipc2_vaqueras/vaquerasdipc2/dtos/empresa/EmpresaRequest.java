@@ -11,7 +11,7 @@ package ipc2_vaqueras.vaquerasdipc2.dtos.empresa;
 public class EmpresaRequest {
     private String nombre;
     private String descripcion;
-    private float comision_negociada;
+    private float comisionNegociada;
 
     public String getNombre() {
         return nombre;
@@ -29,12 +29,12 @@ public class EmpresaRequest {
         this.descripcion = descripcion;
     }
 
-    public float getComision_negociada() {
-        return comision_negociada;
+    public float getComisionNegociada() {
+        return comisionNegociada;
     }
 
-    public void setComision_negociada(float comision_negociada) {
-        this.comision_negociada = comision_negociada;
+    public void setComisionNegociada(float comisionNegociada) {
+        this.comisionNegociada = comisionNegociada;
     }
     
 }
