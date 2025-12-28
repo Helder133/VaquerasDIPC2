@@ -7,6 +7,7 @@ package ipc2_vaqueras.vaquerasdipc2.services.comprarVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.db.DBConnection;
 import ipc2_vaqueras.vaquerasdipc2.db.comprarVideojuego.ComprarVideojuegoDB;
 import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideojuegoRequest;
+import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.comprarVideojuego.ComprarVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.usuario.Usuario;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 public class ComprarService {
     
-    public void comprarVideojuego(ComprarVideojuegoRequest comprarVideojuegoRequest) throws SQLException, UserDataInvalidException {
+    public void comprarVideojuego(ComprarVideojuegoRequest comprarVideojuegoRequest) throws SQLException, UserDataInvalidException, EntityAlreadyExistsException {
         ComprarVideojuego comprarVideojuego = extraerDatos(comprarVideojuegoRequest);
         //obteniendo el videojuego
         VideojuegoService videojuegoService = new VideojuegoService();
@@ -49,7 +50,7 @@ public class ComprarService {
             connection.setAutoCommit(false);
             
             if (validarUnicoVideojuego(comprarVideojuego, connection)) {
-                throw new UserDataInvalidException("El videojuego seleccionado ya lo a comprado anteriormente");
+                throw new EntityAlreadyExistsException("El videojuego seleccionado ya lo a comprado anteriormente");
             }
             
             //Se descuenta el pago de la cartera, y si no hay saldo suficiente, da una exception

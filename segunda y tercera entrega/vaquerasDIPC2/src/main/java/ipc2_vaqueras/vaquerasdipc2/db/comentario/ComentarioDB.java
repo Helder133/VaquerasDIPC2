@@ -9,8 +9,10 @@ import ipc2_vaqueras.vaquerasdipc2.db.DBConnection;
 import ipc2_vaqueras.vaquerasdipc2.models.comentario.Comentario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,10 +24,14 @@ public class ComentarioDB implements CRUD<Comentario> {
 
     private final static String INSERTAR_COMENTARIO = "INSERT INTO comentario_videojuego (usuario_id, videojuego_id, comentario, fecha_hora) VALUES (?,?,?,?)";
     private final static String INSERTAR_COMENTARIO_HIJO = "INSERT INTO comentario_videojuego (usuario_id, videojuego_id, comentario, fecha_hora, comentario_padre) VALUES (?,?,?,?,?)";
+    private final static String SELECCIONAR_UN_COMENTARIO = "select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id where c.comentario_id = ?";
+    private final static String SELECCIONAR_UN_COMENTARIO_VISIBLE = "select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id where c.comentario_id = ? and c.visible = 1";
     private final static String SELECCIONAR_LOS_COMENTARIOS_DE_UN_VIDEOJUEGO = "select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id where c.videojuego_id = ?";
     private final static String SELECCIONAR_LOS_COMENTARIOS_DE_UN_VIDEOJUEGO_VISIBLES = "select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id where c.videojuego_id = ? AND c.visible = 1";
     private final static String ACTUALIZAR_UN_COMENTARIO = "UPDATE comentario_videojuego SET comentario = ?, visible = ? WHERE comentario_id = ?";
+    private final static String ELIMINAR_COMENTARIO = "DELETE FROM comentario_videojuego WHERE comentario_id = ?";
 
+    
     @Override
     public void insertar(Comentario t) throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
@@ -64,14 +70,60 @@ public class ComentarioDB implements CRUD<Comentario> {
         }
     }
 
+    public List<Comentario> seleccionarTodo(int videojuego_id) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        List<Comentario> comentarios = new ArrayList<>();
+        try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_LOS_COMENTARIOS_DE_UN_VIDEOJUEGO)) {
+            select.setInt(1, videojuego_id);
+            ResultSet resultSet = select.executeQuery();
+            while (resultSet.next()) {
+                comentarios.add(extraerComentario(resultSet));
+            }
+            return comentarios;
+        }
+    }
+    
+    public List<Comentario> seleccionarSoloVisible(int videojuego_id) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        List<Comentario> comentarios = new ArrayList<>();
+        try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_LOS_COMENTARIOS_DE_UN_VIDEOJUEGO_VISIBLES)) {
+            select.setInt(1, videojuego_id);
+            ResultSet resultSet = select.executeQuery();
+            while (resultSet.next()) {
+                comentarios.add(extraerComentario(resultSet));
+            }
+            return comentarios;
+       }
+    }
+    
     @Override
     public List<Comentario> seleccionar() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public Optional<Comentario> seleccionarPorParametroVisible(int t) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_UN_COMENTARIO_VISIBLE)) {
+            select.setInt(1, t);
+            ResultSet resultSet = select.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(extraerComentario(resultSet));
+            }
+            return Optional.empty();
+        }
+    }
+    
     @Override
     public Optional<Comentario> seleccionarPorParametro(int t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement select = connection.prepareStatement(SELECCIONAR_UN_COMENTARIO)) {
+            select.setInt(1, t);
+            ResultSet resultSet = select.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(extraerComentario(resultSet));
+            }
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -81,7 +133,22 @@ public class ComentarioDB implements CRUD<Comentario> {
 
     @Override
     public void eliminar(int t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement delete = connection.prepareStatement(ELIMINAR_COMENTARIO)){
+            delete.setInt(1, t);
+            
+            delete.executeUpdate();
+        }
+    }
+
+    private Comentario extraerComentario(ResultSet resultSet) throws SQLException {
+        Comentario comentario = new Comentario(resultSet.getInt("usuario_id"), resultSet.getInt("videojuego_id"), resultSet.getString("comentario"), resultSet.getTimestamp("fecha_hora").toLocalDateTime());
+        comentario.setComentario_id(resultSet.getInt("comentario_id"));
+        comentario.setVisible(resultSet.getBoolean("visible"));
+        comentario.setComentario_padre(resultSet.getInt("comentario_padre"));
+        comentario.setNombre(resultSet.getString("nombre"));
+        
+        return comentario;
     }
 
 }

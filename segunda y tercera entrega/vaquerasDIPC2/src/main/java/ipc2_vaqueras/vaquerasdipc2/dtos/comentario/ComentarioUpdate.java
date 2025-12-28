@@ -11,7 +11,7 @@ package ipc2_vaqueras.vaquerasdipc2.dtos.comentario;
 public class ComentarioUpdate {
 
     private String comentario;
-    private boolean estado;
+    private boolean visible;
 
     public String getComentario() {
         return comentario;
@@ -21,12 +21,12 @@ public class ComentarioUpdate {
         this.comentario = comentario;
     }
 
-    public boolean isEstado() {
-        return estado;
+    public boolean isVisible() {
+        return visible;
     }
 
-    public void setEstado(boolean estado) {
-        this.estado = estado;
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
 }

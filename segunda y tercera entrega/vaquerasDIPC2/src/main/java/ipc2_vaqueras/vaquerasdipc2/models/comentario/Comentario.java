@@ -5,6 +5,7 @@
 package ipc2_vaqueras.vaquerasdipc2.models.comentario;
 
 import java.time.LocalDateTime;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -92,6 +93,13 @@ public class Comentario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public boolean isValidar() {
+        return usuario_id > 0
+                && videojuego_id > 0
+                && fecha_hora != null
+                && StringUtils.isNotBlank(comentario);
     }
 
 }

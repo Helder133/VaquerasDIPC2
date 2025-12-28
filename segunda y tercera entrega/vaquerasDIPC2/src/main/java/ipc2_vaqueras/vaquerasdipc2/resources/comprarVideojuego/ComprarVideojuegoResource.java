@@ -6,6 +6,7 @@ package ipc2_vaqueras.vaquerasdipc2.resources.comprarVideojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideojuegoRequest;
 import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideojuegoResponse;
+import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.services.comprarVideojuego.ComprarService;
 import jakarta.ws.rs.core.Context;
@@ -40,7 +41,8 @@ public class ComprarVideojuegoResource {
             return Response.ok().build();
         } catch (UserDataInvalidException e) {
             return errorEjecucion(e.getMessage(), 1);
-
+        } catch (EntityAlreadyExistsException e) {
+            return errorEjecucion(e.getMessage(), 2);
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }

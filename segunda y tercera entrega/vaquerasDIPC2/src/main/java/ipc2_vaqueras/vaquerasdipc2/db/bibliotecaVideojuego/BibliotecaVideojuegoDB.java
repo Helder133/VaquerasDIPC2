@@ -40,6 +40,16 @@ public class BibliotecaVideojuegoDB implements CRUD<BibliotecaVideojuego> {
         }
     }
 
+    public boolean validarJuegoExistente(int usuario_id, int videojuego_id) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement validar = connection.prepareStatement(VALIDAR_QUE_NO_TENGA_EL_VIDEOJUEGO)) {
+            validar.setInt(1, usuario_id);
+            validar.setInt(2, videojuego_id);
+            ResultSet resultSet = validar.executeQuery();
+            return resultSet.next();
+        }
+    }
+    
     //metodo con transacion
     public void insertar(BibliotecaVideojuego t, Connection connection) throws SQLException {
         try (PreparedStatement insert = connection.prepareStatement(INSERTAR_VIDEOJUEGO_EN_BIBLIOTECA)) {

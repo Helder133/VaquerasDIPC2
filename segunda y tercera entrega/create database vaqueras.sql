@@ -121,13 +121,13 @@ create table if not exists comentario_videojuego (
 	ALTER TABLE comentario_videojuego ADD CONSTRAINT fk_comentario_padre FOREIGN KEY (comentario_padre) REFERENCES comentario_videojuego (comentario_id) ON DELETE CASCADE
 );
 
-select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id;
+select c.*, u.nombre from comentario_videojuego c join usuario u on c.usuario_id = u.usuario_id where c.videojuego_id = ?;
 
 create table if not exists calificacion_videojuego (
 	calificacion_id int not null auto_increment primary key,
 	usuario_id int not null,
 	videojuego_id int not null,
-	calificacion float not null,
+	calificacion float not null check(calificacion >= 0 and calificacion <= 5),
 	constraint fk_videojuego6 foreign key (videojuego_id) references videojuego (videojuego_id),
 	constraint fk_usuario5 foreign key (usuario_id) references usuario (usuario_id)
 );
