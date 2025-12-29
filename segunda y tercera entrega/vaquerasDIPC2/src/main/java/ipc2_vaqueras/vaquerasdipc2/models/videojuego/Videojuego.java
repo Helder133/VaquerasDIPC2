@@ -4,7 +4,10 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.videojuego;
 
+import ipc2_vaqueras.vaquerasdipc2.models.categoria.Categoria;
+import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import java.time.LocalDate;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,6 +26,10 @@ public class Videojuego {
     private byte[] imagen;
     private String descripcion;
     private String nombre_empresa;
+    private double rating_promedio;
+    private int total;
+    private double puntaje;
+    private List<CategoriaVideojuego> categorias;
 
     public Videojuego(int empresa_id, String nombre, float precio, String recurso_minimo, int edad_minima, boolean estado, LocalDate fecha, byte[] imagen, String descripcion) {
         this.empresa_id = empresa_id;
@@ -122,6 +129,38 @@ public class Videojuego {
 
     public void setNombre_empresa(String nombre_empresa) {
         this.nombre_empresa = nombre_empresa;
+    }
+
+    public double getRating_promedio() {
+        return rating_promedio;
+    }
+
+    public void setRating_promedio(double rating_promedio) {
+        this.rating_promedio = rating_promedio;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public double getPuntaje() {
+        return puntaje;
+    }
+
+    public void setPuntaje(double puntaje) {
+        this.puntaje = puntaje;
+    }
+
+    public List<CategoriaVideojuego> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<CategoriaVideojuego> categorias) {
+        this.categorias = categorias;
     }
     
     public boolean isValid () {

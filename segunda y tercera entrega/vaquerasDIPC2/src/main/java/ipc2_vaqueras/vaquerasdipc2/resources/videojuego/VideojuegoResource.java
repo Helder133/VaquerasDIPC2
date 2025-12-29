@@ -93,6 +93,21 @@ public class VideojuegoResource {
     }
     
     @GET
+    @Path("topRanking")
+    public Response obtenerLosMejoresVideojeugos() {
+        try {
+            VideojuegoService videojuegoService = new VideojuegoService();
+            List<VideojuegoResponse> videojuegos = videojuegoService.obtenerLosMejoresVideojuegosSegunComunidad()
+                    .stream()
+                    .map(VideojuegoResponse::new)
+                    .toList();
+            return Response.ok(videojuegos).build();
+        } catch (SQLException e) {
+            return errorEjecucion(e.getMessage(), 3);
+        }
+    }
+    
+    @GET
     @Path("/noComprado/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response obtenerVideojuegoNoComprado(@PathParam("id") int id) {

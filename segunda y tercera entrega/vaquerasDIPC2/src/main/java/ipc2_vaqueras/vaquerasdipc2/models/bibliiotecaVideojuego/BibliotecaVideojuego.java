@@ -4,7 +4,9 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego;
 
+import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -21,6 +23,10 @@ public class BibliotecaVideojuego {
     private String nombreEmpresa;
     private String descripcion;
     private byte[] imagen;
+    private double rating_promedio;
+    private int total;
+    private double puntaje;
+    private List<CategoriaVideojuego> categorias;
     
     
     public BibliotecaVideojuego(int videojuego_id, int usuario_id, LocalDate fecha, boolean estado) {
@@ -102,6 +108,38 @@ public class BibliotecaVideojuego {
         this.imagen = imagen;
     }
 
+    public double getRating_promedio() {
+        return rating_promedio;
+    }
+
+    public void setRating_promedio(double rating_promedio) {
+        this.rating_promedio = rating_promedio;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public double getPuntaje() {
+        return puntaje;
+    }
+
+    public void setPuntaje(double puntaje) {
+        this.puntaje = puntaje;
+    }
+
+    public List<CategoriaVideojuego> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<CategoriaVideojuego> categorias) {
+        this.categorias = categorias;
+    }
+    
     public boolean isValid() {
         return videojuego_id > 0
                 && usuario_id > 0

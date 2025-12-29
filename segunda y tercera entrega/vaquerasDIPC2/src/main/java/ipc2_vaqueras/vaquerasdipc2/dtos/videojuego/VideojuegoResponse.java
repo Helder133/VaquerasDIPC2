@@ -7,8 +7,10 @@ package ipc2_vaqueras.vaquerasdipc2.dtos.videojuego;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -28,6 +30,8 @@ public class VideojuegoResponse {
     private byte[] imagen;
     private String descripcion;
     private String nombre_empresa;
+    private double puntaje;
+    private List<CategoriaVideojuego> categorias;
     
     public VideojuegoResponse(Videojuego videojuego){
         this.videojuego_id = videojuego.getVideojuego_id();
@@ -41,6 +45,8 @@ public class VideojuegoResponse {
         this.imagen = videojuego.getImagen();
         this.descripcion = videojuego.getDescripcion();
         this.nombre_empresa = videojuego.getNombre_empresa();
+        this.puntaje = videojuego.getPuntaje();
+        this.categorias = videojuego.getCategorias();
     }
 
     public int getVideojuego_id() {
@@ -130,4 +136,21 @@ public class VideojuegoResponse {
     public void setNombre_empresa(String nombre_empresa) {
         this.nombre_empresa = nombre_empresa;
     }
+    
+    public double getPuntaje() {
+        return puntaje;
+    }
+
+    public void setPuntaje(double puntaje) {
+        this.puntaje = puntaje;
+    }
+
+    public List<CategoriaVideojuego> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<CategoriaVideojuego> categorias) {
+        this.categorias = categorias;
+    }
+    
 }

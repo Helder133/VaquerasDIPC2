@@ -24,9 +24,11 @@ public class CalificacionVideojuegoDB implements CRUD<CalificacionVideojuego> {
     private final static String OBTENER_CALIFICACION_USUARIO_VIDEOJUEGO = "SELECT * FROM calificacion_videojuego WHERE videojuego_id = ? AND usuario_id = ?";
     private final static String ACTUALIZAR_CALIFICACION = "UPDATE calificacion_videojuego SET calificacion = ? WHERE calificacion_id = ?";
     private final static String PROMEDIO_DE_CALIFICACION_GLOBAL = "SELECT AVG(calificacion) AS promedio_global FROM calificacion_videojuego";
+    private final static String VALIDAR_QUE_EXISTA_CALIFICACION_A_ACTUALIZAR = "SELECT * FROM calificacion_videojuego WHERE calificacion_id = ?";
     //va en la base de datos de videojuego
     //private final static String OBTENER_LOS_MEJORES_VIDEOJUEGOS = "select v.videojuego_id, v.nombre, AVG(c.calificacion) as rating_promedio, count(c.calificacion_id) as total_votos from videojuego v left join calificacion_videojuego c on v.videojuego_id = c.videojuego_id group by v.videojuego_id";
-    public Optional<Double> promedioBlobal() throws SQLException {
+
+    public Optional<Double> promedioGlobal() throws SQLException {
         Connection connection = DBConnection.getInstance().getConnection();
         try (PreparedStatement promedioG = connection.prepareStatement(PROMEDIO_DE_CALIFICACION_GLOBAL)) {
             ResultSet resultSet = promedioG.executeQuery();
@@ -67,7 +69,7 @@ public class CalificacionVideojuegoDB implements CRUD<CalificacionVideojuego> {
             ResultSet resultSet = select.executeQuery();
             if (resultSet.next()) {
                 CalificacionVideojuego calificacionVideojuego = new CalificacionVideojuego(resultSet.getInt("usuario_id"), resultSet.getInt("videojuego_id"), resultSet.getFloat("calificacion"));
-                calificacionVideojuego.setVideojuego_id(resultSet.getInt("calificacion_id"));
+                calificacionVideojuego.setCalificacion_id(resultSet.getInt("calificacion_id"));
                 return Optional.of(calificacionVideojuego);
             }
             return Optional.empty();
@@ -81,7 +83,17 @@ public class CalificacionVideojuegoDB implements CRUD<CalificacionVideojuego> {
 
     @Override
     public Optional<CalificacionVideojuego> seleccionarPorParametro(int t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Connection connection = DBConnection.getInstance().getConnection();
+        try (PreparedStatement select = connection.prepareStatement(VALIDAR_QUE_EXISTA_CALIFICACION_A_ACTUALIZAR)) {
+            select.setInt(1, t);
+            ResultSet resultSet = select.executeQuery();
+            if (resultSet.next()) {
+                CalificacionVideojuego calificacionVideojuego = new CalificacionVideojuego(resultSet.getInt("usuario_id"), resultSet.getInt("videojuego_id"), resultSet.getFloat("calificacion"));
+                calificacionVideojuego.setVideojuego_id(resultSet.getInt("calificacion_id"));
+                return Optional.of(calificacionVideojuego);
+            }
+            return Optional.empty();
+        }
     }
 
     @Override

@@ -53,4 +53,11 @@ public class CalificacionVideojuego {
         this.calificacion = calificacion;
     }
     
+    public boolean isValid() {
+        return usuario_id > 0 
+                && videojuego_id > 0
+                && calificacion >= 1 
+                && calificacion <=5;
+    }
+    
 }

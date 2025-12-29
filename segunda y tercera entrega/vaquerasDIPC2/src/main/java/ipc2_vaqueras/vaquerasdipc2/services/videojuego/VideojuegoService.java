@@ -13,10 +13,12 @@ import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
+import ipc2_vaqueras.vaquerasdipc2.services.calificacion.CalificacionVideojuegoService;
 import ipc2_vaqueras.vaquerasdipc2.services.categoria.videojuego.CategoriaVideojuegoService;
 import ipc2_vaqueras.vaquerasdipc2.services.empresa.EmpresaService;
 import ipc2_vaqueras.vaquerasdipc2.services.multimedia.MultimediaService;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -51,22 +53,22 @@ public class VideojuegoService {
 
     public List<Videojuego> obtenerTodosLosVideojuegos() throws SQLException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
-        return videojuegoDB.seleccionar();
+        return calcularPuntaje(videojuegoDB.seleccionar());
     }
 
     public List<Videojuego> obtenerTodosLosVideojuegosNoComprado(int usuario_id) throws SQLException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
-        return videojuegoDB.seleccionar(usuario_id);
+        return calcularPuntaje(videojuegoDB.seleccionar(usuario_id));
     }
-    
+
     public List<Videojuego> obtenerTodosLosVideojuegosDeUnaEmpresa(int empresa_id) throws SQLException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
-        return videojuegoDB.seleccionarPorEmpresa(empresa_id);
+        return calcularPuntaje(videojuegoDB.seleccionarPorEmpresa(empresa_id));
     }
 
     public List<Videojuego> obtenerVideojuegosPorParametro(String nombre) throws SQLException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
-        return videojuegoDB.seleccionarPorParametro(nombre);
+        return calcularPuntaje(videojuegoDB.seleccionarPorParametro(nombre));
     }
 
     public Videojuego obtenerVideojuegosPorParametro(int id) throws SQLException, UserDataInvalidException {
@@ -75,7 +77,50 @@ public class VideojuegoService {
         if (videoOptional.isEmpty()) {
             throw new UserDataInvalidException("No se puedo encontrar el videojuego solicitado");
         }
-        return videoOptional.get();
+        return calcularPuntaje(videoOptional.get());
+    }
+    
+    private Videojuego obtenertodaSuCategoria (Videojuego videojuego) throws SQLException {
+        CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
+        videojuego.setCategorias(categoriaVideojuegoService.obtenerLasCategoriasDeUnVideojuego(videojuego.getVideojuego_id()));
+        return videojuego;
+    }
+    
+    public List<Videojuego> obtenerLosMejoresVideojuegosSegunComunidad() throws SQLException {
+        VideojuegoDB videojuegoDB = new VideojuegoDB();
+        return calcularPuntaje(videojuegoDB.obtenerLosMejoresVideojuegosSegunComunidad());
+    }
+
+    private List<Videojuego> calcularPuntaje(List<Videojuego> videojuegos) throws SQLException {
+        CalificacionVideojuegoService calificacionVideojuegoService = new CalificacionVideojuegoService();
+        double c = calificacionVideojuegoService.promedioDeCalificacionGeneral();
+        int m = 10;
+
+        for (Videojuego videojuego : videojuegos) {
+            double porcentaje = calcularPorcentaje(videojuego.getRating_promedio(), videojuego.getTotal(), c, m);
+            videojuego.setPuntaje(porcentaje);
+            videojuego = obtenertodaSuCategoria(videojuego);
+        }
+        videojuegos.sort(Comparator.comparing(Videojuego::getPuntaje).reversed());
+
+        return videojuegos;
+    }
+
+    private Videojuego calcularPuntaje(Videojuego videojuego) throws SQLException {
+        CalificacionVideojuegoService calificacionVideojuegoService = new CalificacionVideojuegoService();
+        double c = calificacionVideojuegoService.promedioDeCalificacionGeneral();
+        int m = 10;
+        
+        double porcentaje = calcularPorcentaje(videojuego.getRating_promedio(), videojuego.getTotal(), c, m);
+        videojuego.setPuntaje(porcentaje);
+        videojuego = obtenertodaSuCategoria(videojuego);
+        
+        return videojuego;
+    }
+
+    private double calcularPorcentaje(double r, int v, double c, int m) {
+        return ((double) v / (v + m)) * r
+                + ((double) m / (v + m)) * c;
     }
 
     private boolean validarDatosActualizado(Videojuego videojuego) {
@@ -124,11 +169,11 @@ public class VideojuegoService {
         categoriaVideojuegoService.crearCategoriaVideojuego(categoriaVideojuegoRequest);
     }
 
-    public List<CategoriaVideojuego> obtenerCategoriasDeUnVideojuego(int videojuego_id) throws SQLException{
+    public List<CategoriaVideojuego> obtenerCategoriasDeUnVideojuego(int videojuego_id) throws SQLException {
         CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
         return categoriaVideojuegoService.obtenerLasCategoriasDeUnVideojuego(videojuego_id);
     }
-    
+
     public void eliminarCategoriaDeUnVideojuego(int videojuego_id, int categoria_id) throws SQLException, UserDataInvalidException {
         CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
         categoriaVideojuegoService.eliminarCategoriaVideojuego(videojuego_id, categoria_id);
