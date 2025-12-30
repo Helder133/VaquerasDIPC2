@@ -44,14 +44,14 @@ create table if not exists historial_cartera (
 	monto float not null,
 	constraint fk_cartera foreign key (cartera_id) references cartera_digital (cartera_id)
 );
-
+alter table videojuego add column clasificacion enum ('E','T','M') not null default 'E';
 create table if not exists videojuego (
 	videojuego_id int not null auto_increment primary key,
 	empresa_id int not null,
 	nombre varchar(200) not null,
 	precio float not null,
 	recurso_minimo varchar(250) not null,
-	edad_minima int not null,
+	clasificacion enum ('E','T','M') not null default 'E',
 	estado bool not null,
 	fecha date not null,
 	imagen MEDIUMBLOB,

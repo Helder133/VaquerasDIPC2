@@ -1,0 +1,220 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="Blank_A4" language="java" columnCount="1" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b7527ab6-2818-4879-beb6-1e338d12fc74">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Reporte De Ganacia global"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="fechaInicio" class="java.sql.Date"/>
+	<parameter name="fechaFin" class="java.sql.Date"/>
+	<query language="SQL"><![CDATA[SELECT 
+            v.nombre AS videojuego,
+            e.nombre AS empresa,
+            COUNT(b.videojuego_id) AS total_ventas,
+            v.precio,
+            ROUND((COUNT(b.videojuego_id) * v.precio),2) AS ingreso_total,
+            ROUND((COUNT(b.videojuego_id) * v.precio * (1 - ((cs.porcentaje_ganancia - IFNULL(e.comision_negociada, 0)) / 100))
+            ),2) AS ganancia_empresa,
+            ROUND((COUNT(b.videojuego_id) * v.precio *
+                 ((cs.porcentaje_ganancia - IFNULL(e.comision_negociada, 0)) / 100)
+            ),2) AS ganancia_plataforma
+        FROM biblioteca_videojuego b
+        JOIN videojuego v ON b.videojuego_id = v.videojuego_id
+        JOIN empresa e ON v.empresa_id = e.empresa_id
+        JOIN configuracion_sistema cs ON cs.configuracion_id = 1
+        WHERE b.fecha BETWEEN $P{fechaInicio} AND $P{fechaFin}
+        GROUP BY v.videojuego_id]]></query>
+	<field name="videojuego" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="videojuego"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="videojuego"/>
+	</field>
+	<field name="empresa" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.label" value="empresa"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="empresa"/>
+	</field>
+	<field name="total_ventas" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total_ventas"/>
+		<property name="com.jaspersoft.studio.field.label" value="total_ventas"/>
+	</field>
+	<field name="precio" class="java.lang.Float">
+		<property name="com.jaspersoft.studio.field.name" value="precio"/>
+		<property name="com.jaspersoft.studio.field.label" value="precio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="videojuego"/>
+	</field>
+	<field name="ingreso_total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="ingreso_total"/>
+		<property name="com.jaspersoft.studio.field.label" value="ingreso_total"/>
+	</field>
+	<field name="ganancia_empresa" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="ganancia_empresa"/>
+		<property name="com.jaspersoft.studio.field.label" value="ganancia_empresa"/>
+	</field>
+	<field name="ganancia_plataforma" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.name" value="ganancia_plataforma"/>
+		<property name="com.jaspersoft.studio.field.label" value="ganancia_plataforma"/>
+	</field>
+	<background splitType="Stretch"/>
+	<pageHeader height="100" splitType="Stretch">
+		<element kind="rectangle" uuid="366a43c9-d140-460f-a5ee-31831c83cfd2" x="133" y="5" width="535" height="50" backcolor="#2C46DB">
+			<pen lineWidth="0.0"/>
+		</element>
+		<element kind="staticText" uuid="c148ca5d-7251-4926-a3f5-40d940596179" x="156" y="10" width="490" height="40" fontSize="25.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Reporte de ganancia general]]></text>
+		</element>
+		<property name="com.jaspersoft.studio.layout"/>
+	</pageHeader>
+	<columnHeader height="33" splitType="Stretch">
+		<element kind="staticText" uuid="297f4603-517c-4887-b621-57ac0364f1af" x="20" y="0" width="100" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Videojuego]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="372dd613-b611-4501-8877-2b067073eeb3"/>
+			<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="dd1c0b9b-b37d-40be-ab94-b80f071dbbba" x="300" y="0" width="70" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Precio]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f916fbee-aa56-4952-a682-95bd8403ddfc"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="ce62bb9f-5b2e-4268-aab9-17feb248cacb" x="470" y="0" width="159" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Ganancia empresa]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d667192d-d5a3-4545-9619-7e5b2691274c"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d2d0a90b-0f3a-48f2-8d31-33a0f9cc686e" x="629" y="0" width="163" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Ganancia plataforma]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c78c396f-a10c-4f07-aebb-b2e408163678"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="e9db28b3-f301-459c-b4c2-4a571a754a52" x="120" y="0" width="100" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Empresa]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="833525e0-a64c-42fb-9567-af74f366b174"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="633cbf71-d953-479a-bd3a-8173c3e14510" x="220" y="0" width="80" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Total venta]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ac2ffa0-7728-4902-a8f2-862487b6361a"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="14eefc45-5a6e-45c3-8275-e763d0f63938" x="370" y="0" width="100" height="20" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[Ingreso total]]></text>
+			<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8aafd612-9335-49de-bf9e-608ea387903c"/>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<element kind="textField" uuid="5f128c30-f219-4511-88f2-4c5531a7f8ad" x="20" y="0" width="100" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{videojuego}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="372dd613-b611-4501-8877-2b067073eeb3"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="aa1f292e-ba36-4239-9aea-929fdd3f5e97" x="120" y="0" width="100" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{empresa}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="833525e0-a64c-42fb-9567-af74f366b174"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="64082eb7-df9f-4158-b246-07e1e3bc98bc" x="220" y="0" width="80" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{total_ventas}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ac2ffa0-7728-4902-a8f2-862487b6361a"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="50d31676-bb29-4900-932b-59c79f5870b1" x="300" y="0" width="70" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{precio}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f916fbee-aa56-4952-a682-95bd8403ddfc"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="7e70a664-4306-4379-a37f-00b63d6a6b4e" x="370" y="0" width="100" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{ingreso_total}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8aafd612-9335-49de-bf9e-608ea387903c"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="1dbb0192-e03d-44aa-9d66-8e371c48b913" x="470" y="0" width="159" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{ganancia_empresa}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d667192d-d5a3-4545-9619-7e5b2691274c"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="a2a896a9-d001-43c6-8a9e-9727c7acb563" x="629" y="0" width="161" height="20" hTextAlign="Center">
+				<expression><![CDATA[$F{ganancia_plataforma}]]></expression>
+				<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c78c396f-a10c-4f07-aebb-b2e408163678"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+</jasperReport>

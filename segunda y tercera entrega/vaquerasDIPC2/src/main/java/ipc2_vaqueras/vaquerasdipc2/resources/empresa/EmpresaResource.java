@@ -67,7 +67,7 @@ public class EmpresaResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-    
+
     @GET
     @Path("/videojuego/{code}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,11 +79,13 @@ public class EmpresaResource {
                     .map(VideojuegoResponse::new)
                     .toList();
             return Response.ok(videojuegos).build();
-         } catch (SQLException e) {
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+        } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-    
+
     @GET
     @Path("{code}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -102,7 +104,7 @@ public class EmpresaResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-    
+
     private Response obtenerEmpresaPorParametroString(String code) {
         List<EmpresaResponse> empresas;
         EmpresaService empresaService = new EmpresaService();
@@ -112,12 +114,11 @@ public class EmpresaResource {
                     .map(EmpresaResponse::new)
                     .toList();
             return Response.ok(empresas).build();
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
-    
-    
+
     @PUT
     @Path("{code}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -134,6 +135,7 @@ public class EmpresaResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }
+
     /*
     @DELETE
     @Path("{code}")
@@ -148,7 +150,7 @@ public class EmpresaResource {
             return errorEjecucion(e.getMessage(), 3);
         }
     }*/
-    
+
     private Response errorEjecucion(String mensaje, int tipo) {
         switch (tipo) {
             case 1 -> {
@@ -159,18 +161,18 @@ public class EmpresaResource {
             }
             case 2 -> {
                 return Response.status(Response.Status.CONFLICT)
-                    .entity("{\"error\": \"" + mensaje + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             }
             case 3 -> {
                 return Response.status(Response.Status.NOT_FOUND)
-                    .entity("{\"error\": \"" + mensaje + "\"}")
-                    .type(MediaType.APPLICATION_JSON)
-                    .build();
+                        .entity("{\"error\": \"" + mensaje + "\"}")
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             }
         }
         return null;
     }
-    
+
 }

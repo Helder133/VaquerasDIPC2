@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +24,7 @@ public class VideojuegoResponse {
     private String nombre;
     private float precio;
     private String recurso_minimo;
-    private int edad_minima;
+    private EnumClasificacion clasificacion;
     private boolean estado;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -32,6 +34,7 @@ public class VideojuegoResponse {
     private String nombre_empresa;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
+    private List<Multimedia> multimedias;
     
     public VideojuegoResponse(Videojuego videojuego){
         this.videojuego_id = videojuego.getVideojuego_id();
@@ -39,7 +42,7 @@ public class VideojuegoResponse {
         this.nombre = videojuego.getNombre();
         this.precio = videojuego.getPrecio();
         this.recurso_minimo = videojuego.getRecurso_minimo();
-        this.edad_minima = videojuego.getEdad_minima();
+        this.clasificacion = videojuego.getClasificacion();
         this.estado = videojuego.isEstado();
         this.fecha = videojuego.getFecha();
         this.imagen = videojuego.getImagen();
@@ -47,6 +50,7 @@ public class VideojuegoResponse {
         this.nombre_empresa = videojuego.getNombre_empresa();
         this.puntaje = videojuego.getPuntaje();
         this.categorias = videojuego.getCategorias();
+        this.multimedias = videojuego.getMultimedias();
     }
 
     public int getVideojuego_id() {
@@ -89,12 +93,12 @@ public class VideojuegoResponse {
         this.recurso_minimo = recurso_minimo;
     }
 
-    public int getEdad_minima() {
-        return edad_minima;
+    public EnumClasificacion getClasificacion() {
+        return clasificacion;
     }
 
-    public void setEdad_minima(int edad_minima) {
-        this.edad_minima = edad_minima;
+    public void setClasificacion(EnumClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
     }
 
     public boolean isEstado() {
@@ -151,6 +155,14 @@ public class VideojuegoResponse {
 
     public void setCategorias(List<CategoriaVideojuego> categorias) {
         this.categorias = categorias;
+    }
+
+    public List<Multimedia> getMultimedias() {
+        return multimedias;
+    }
+
+    public void setMultimedias(List<Multimedia> multimedias) {
+        this.multimedias = multimedias;
     }
     
 }

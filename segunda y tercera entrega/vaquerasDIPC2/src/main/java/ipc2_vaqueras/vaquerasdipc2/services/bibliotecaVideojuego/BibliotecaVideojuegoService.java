@@ -10,8 +10,10 @@ import ipc2_vaqueras.vaquerasdipc2.dtos.compraYBibliotecaVideojuego.ComprarVideo
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego.BibliotecaVideojuego;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.services.calificacion.CalificacionVideojuegoService;
 import ipc2_vaqueras.vaquerasdipc2.services.categoria.videojuego.CategoriaVideojuegoService;
+import ipc2_vaqueras.vaquerasdipc2.services.multimedia.MultimediaService;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -74,24 +76,23 @@ public class BibliotecaVideojuegoService {
             double porcentaje = calcularPorcentaje(bibliotecaVideojuego.getRating_promedio(), bibliotecaVideojuego.getTotal(), c, m);
             bibliotecaVideojuego.setPuntaje(porcentaje);
             bibliotecaVideojuego = obtenertodaSuCategoria(bibliotecaVideojuego);
+            bibliotecaVideojuego = obtenerTodaSuMultimedia(bibliotecaVideojuego);
         }
         bibliotecaVideojuegos.sort(Comparator.comparing(BibliotecaVideojuego::getPuntaje).reversed());
 
         return bibliotecaVideojuegos;
     }
 
-    private BibliotecaVideojuego calcularPuntaje(BibliotecaVideojuego bibliotecaVideojuego) throws SQLException {
-        CalificacionVideojuegoService calificacionVideojuegoService = new CalificacionVideojuegoService();
-        double c = calificacionVideojuegoService.promedioDeCalificacionGeneral();
-        int m = 10;
-        
-        double porcentaje = calcularPorcentaje(bibliotecaVideojuego.getRating_promedio(), bibliotecaVideojuego.getTotal(), c, m);
-        bibliotecaVideojuego.setPuntaje(porcentaje);
-        bibliotecaVideojuego = obtenertodaSuCategoria(bibliotecaVideojuego);
-        
+    public List<Multimedia> obtenerMultimediasDeUnVideojuego(int t) throws SQLException {
+        MultimediaService multimediaService = new MultimediaService();
+        return multimediaService.obtenerMultimediasDeUnVideojuego(t);
+    }
+    
+    private BibliotecaVideojuego obtenerTodaSuMultimedia(BibliotecaVideojuego bibliotecaVideojuego) throws SQLException {
+        bibliotecaVideojuego.setMultimedias(obtenerMultimediasDeUnVideojuego(bibliotecaVideojuego.getVideojuego_id()));
         return bibliotecaVideojuego;
     }
-
+    
     private double calcularPorcentaje(double r, int v, double c, int m) {
         return ((double) v / (v + m)) * r
                 + ((double) m / (v + m)) * c;

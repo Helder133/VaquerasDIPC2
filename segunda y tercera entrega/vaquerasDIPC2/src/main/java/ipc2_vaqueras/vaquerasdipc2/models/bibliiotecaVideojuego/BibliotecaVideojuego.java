@@ -5,6 +5,7 @@
 package ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class BibliotecaVideojuego {
     private int total;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
-    
+    private List<Multimedia> multimedias;
     
     public BibliotecaVideojuego(int videojuego_id, int usuario_id, LocalDate fecha, boolean estado) {
         this.videojuego_id = videojuego_id;
@@ -138,6 +139,14 @@ public class BibliotecaVideojuego {
 
     public void setCategorias(List<CategoriaVideojuego> categorias) {
         this.categorias = categorias;
+    }
+
+    public List<Multimedia> getMultimedias() {
+        return multimedias;
+    }
+
+    public void setMultimedias(List<Multimedia> multimedias) {
+        this.multimedias = multimedias;
     }
     
     public boolean isValid() {

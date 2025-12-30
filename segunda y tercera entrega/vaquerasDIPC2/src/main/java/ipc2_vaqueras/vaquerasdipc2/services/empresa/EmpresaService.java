@@ -106,7 +106,7 @@ public class EmpresaService {
         empresaDB.eliminar(code);
     }
 
-    public List<Videojuego> obteneVideojuegosDeLaEmpresa(int code) throws SQLException {
+    public List<Videojuego> obteneVideojuegosDeLaEmpresa(int code) throws SQLException, UserDataInvalidException {
         VideojuegoService videojuegoService = new VideojuegoService();
         return videojuegoService.obtenerTodosLosVideojuegosDeUnaEmpresa(code);
     }

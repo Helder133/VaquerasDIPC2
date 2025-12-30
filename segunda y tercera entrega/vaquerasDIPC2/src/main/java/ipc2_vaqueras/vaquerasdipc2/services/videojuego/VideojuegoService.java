@@ -51,22 +51,22 @@ public class VideojuegoService {
         videojuegoDB.actualizar(videojuego);
     }
 
-    public List<Videojuego> obtenerTodosLosVideojuegos() throws SQLException {
+    public List<Videojuego> obtenerTodosLosVideojuegos() throws SQLException, UserDataInvalidException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return calcularPuntaje(videojuegoDB.seleccionar());
     }
 
-    public List<Videojuego> obtenerTodosLosVideojuegosNoComprado(int usuario_id) throws SQLException {
+    public List<Videojuego> obtenerTodosLosVideojuegosNoComprado(int usuario_id) throws SQLException, UserDataInvalidException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return calcularPuntaje(videojuegoDB.seleccionar(usuario_id));
     }
 
-    public List<Videojuego> obtenerTodosLosVideojuegosDeUnaEmpresa(int empresa_id) throws SQLException {
+    public List<Videojuego> obtenerTodosLosVideojuegosDeUnaEmpresa(int empresa_id) throws SQLException, UserDataInvalidException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return calcularPuntaje(videojuegoDB.seleccionarPorEmpresa(empresa_id));
     }
 
-    public List<Videojuego> obtenerVideojuegosPorParametro(String nombre) throws SQLException {
+    public List<Videojuego> obtenerVideojuegosPorParametro(String nombre) throws SQLException, UserDataInvalidException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return calcularPuntaje(videojuegoDB.seleccionarPorParametro(nombre));
     }
@@ -81,17 +81,16 @@ public class VideojuegoService {
     }
     
     private Videojuego obtenertodaSuCategoria (Videojuego videojuego) throws SQLException {
-        CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
-        videojuego.setCategorias(categoriaVideojuegoService.obtenerLasCategoriasDeUnVideojuego(videojuego.getVideojuego_id()));
+        videojuego.setCategorias(obtenerCategoriasDeUnVideojuego(videojuego.getVideojuego_id()));
         return videojuego;
     }
     
-    public List<Videojuego> obtenerLosMejoresVideojuegosSegunComunidad() throws SQLException {
+    public List<Videojuego> obtenerLosMejoresVideojuegosSegunComunidad() throws SQLException, UserDataInvalidException {
         VideojuegoDB videojuegoDB = new VideojuegoDB();
         return calcularPuntaje(videojuegoDB.obtenerLosMejoresVideojuegosSegunComunidad());
     }
 
-    private List<Videojuego> calcularPuntaje(List<Videojuego> videojuegos) throws SQLException {
+    private List<Videojuego> calcularPuntaje(List<Videojuego> videojuegos) throws SQLException, UserDataInvalidException {
         CalificacionVideojuegoService calificacionVideojuegoService = new CalificacionVideojuegoService();
         double c = calificacionVideojuegoService.promedioDeCalificacionGeneral();
         int m = 10;
@@ -100,13 +99,14 @@ public class VideojuegoService {
             double porcentaje = calcularPorcentaje(videojuego.getRating_promedio(), videojuego.getTotal(), c, m);
             videojuego.setPuntaje(porcentaje);
             videojuego = obtenertodaSuCategoria(videojuego);
+            videojuego = obtenerTodaSuMultimedia(videojuego);
         }
         videojuegos.sort(Comparator.comparing(Videojuego::getPuntaje).reversed());
 
         return videojuegos;
     }
 
-    private Videojuego calcularPuntaje(Videojuego videojuego) throws SQLException {
+    private Videojuego calcularPuntaje(Videojuego videojuego) throws SQLException, UserDataInvalidException {
         CalificacionVideojuegoService calificacionVideojuegoService = new CalificacionVideojuegoService();
         double c = calificacionVideojuegoService.promedioDeCalificacionGeneral();
         int m = 10;
@@ -114,6 +114,7 @@ public class VideojuegoService {
         double porcentaje = calcularPorcentaje(videojuego.getRating_promedio(), videojuego.getTotal(), c, m);
         videojuego.setPuntaje(porcentaje);
         videojuego = obtenertodaSuCategoria(videojuego);
+        videojuego = obtenerTodaSuMultimedia(videojuego);
         
         return videojuego;
     }
@@ -127,7 +128,7 @@ public class VideojuegoService {
         return StringUtils.isNotBlank(videojuego.getNombre())
                 && videojuego.getPrecio() > 0
                 && StringUtils.isNotBlank(videojuego.getRecurso_minimo())
-                && videojuego.getEdad_minima() > 0;
+                && videojuego.getClasificacion() != null;
     }
 
     //Multimedia de un videojuego...
@@ -151,8 +152,6 @@ public class VideojuegoService {
     }
 
     public List<Multimedia> obtenerMultimediasDeUnVideojuego(int t) throws SQLException, UserDataInvalidException {
-        obtenerVideojuegosPorParametro(t);
-
         MultimediaService multimediaService = new MultimediaService();
         return multimediaService.obtenerMultimediasDeUnVideojuego(t);
     }
@@ -177,5 +176,10 @@ public class VideojuegoService {
     public void eliminarCategoriaDeUnVideojuego(int videojuego_id, int categoria_id) throws SQLException, UserDataInvalidException {
         CategoriaVideojuegoService categoriaVideojuegoService = new CategoriaVideojuegoService();
         categoriaVideojuegoService.eliminarCategoriaVideojuego(videojuego_id, categoria_id);
+    }
+
+    private Videojuego obtenerTodaSuMultimedia(Videojuego videojuego) throws SQLException, UserDataInvalidException {
+        videojuego.setMultimedias(obtenerMultimediasDeUnVideojuego(videojuego.getVideojuego_id()));
+        return videojuego;
     }
 }

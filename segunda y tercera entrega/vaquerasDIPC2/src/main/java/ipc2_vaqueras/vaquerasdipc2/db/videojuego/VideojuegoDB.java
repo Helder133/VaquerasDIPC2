@@ -6,6 +6,7 @@ package ipc2_vaqueras.vaquerasdipc2.db.videojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.db.CRUD;
 import ipc2_vaqueras.vaquerasdipc2.db.DBConnection;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import java.sql.Connection;
 import java.sql.Date;
@@ -22,14 +23,14 @@ import java.util.Optional;
  */
 public class VideojuegoDB implements CRUD<Videojuego> {
 
-    private final static String INSERTAR_VIDEOJUEGO = "INSERT INTO videojuego (empresa_id, nombre, precio, recurso_minimo, edad_minima, estado, fecha, imagen, descripcion) VALUES (?,?,?,?,?,?,?,?,?)";
-    private final static String EDITAR_VIDEOJUEGO = "UPDATE videojuego SET nombre = ?, precio = ?, recurso_minimo = ?, edad_minima = ?, estado = ?, imagen = ?, descripcion = ? WHERE videojuego_id = ?";
-    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id";
-    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS_DE_UNA_EMPRESA = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.empresa_id = ?";
-    private final static String SELECCIONAR_VIDEOJUEGO_POR_STRING = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.nombre LIKE ?";
-    private final static String SELECCIONAR_VIDEOJUEGO_POR_INT = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.videojuego_id = ?";
-    private final static String SELECCIONAR_VIDEOJUEGO_NO_COMPRADO = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id where v.estado = 1 and not exists (select 1 from biblioteca_videojuego b where b.videojuego_id = v.videojuego_id and b.usuario_id = ?)";
-    private final static String SELECCIONAR_LOS_MEJORES_JUEGOS_SEGUN_COMUNIDAD = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.edad_minima, v.estado, v.fecha, v.descripcion, v.imagen, e.nombre as nombre_empresa, count(c.calificacion_id) as total_votos, avg(c.calificacion) as rating_promedio from videojuego v join empresa e on v.empresa_id = e.empresa_id left join calificacion_videojuego c on v.videojuego_id = c.videojuego_id where v.estado = 1 group by v.videojuego_id limit 10;";
+    private final static String INSERTAR_VIDEOJUEGO = "INSERT INTO videojuego (empresa_id, nombre, precio, recurso_minimo, clasificacion, estado, fecha, imagen, descripcion) VALUES (?,?,?,?,?,?,?,?,?)";
+    private final static String EDITAR_VIDEOJUEGO = "UPDATE videojuego SET nombre = ?, precio = ?, recurso_minimo = ?, clasificacion = ?, estado = ?, imagen = ?, descripcion = ? WHERE videojuego_id = ?";
+    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id";
+    private final static String SELECCIONAR_TODOS_LOS_VIDEOJUEGOS_DE_UNA_EMPRESA = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.empresa_id = ?";
+    private final static String SELECCIONAR_VIDEOJUEGO_POR_STRING = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.nombre LIKE ?";
+    private final static String SELECCIONAR_VIDEOJUEGO_POR_INT = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id WHERE v.videojuego_id = ?";
+    private final static String SELECCIONAR_VIDEOJUEGO_NO_COMPRADO = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.imagen, v.descripcion, e.nombre as nombre_empresa, coalesce(c.rating_promedio, 0) as rating_promedio, coalesce(c.total_votos, 0) as total_votos from videojuego v join empresa e on v.empresa_id = e.empresa_id left join (select videojuego_id, avg(calificacion) as rating_promedio, count(*) as total_votos from calificacion_videojuego group by videojuego_id) c on c.videojuego_id = v.videojuego_id where v.estado = 1 and not exists (select 1 from biblioteca_videojuego b where b.videojuego_id = v.videojuego_id and b.usuario_id = ?)";
+    private final static String SELECCIONAR_LOS_MEJORES_JUEGOS_SEGUN_COMUNIDAD = "select v.videojuego_id, v.empresa_id, v.nombre, v.precio, v.recurso_minimo, v.clasificacion, v.estado, v.fecha, v.descripcion, v.imagen, e.nombre as nombre_empresa, count(c.calificacion_id) as total_votos, avg(c.calificacion) as rating_promedio from videojuego v join empresa e on v.empresa_id = e.empresa_id left join calificacion_videojuego c on v.videojuego_id = c.videojuego_id where v.estado = 1 group by v.videojuego_id limit 10;";
     //private final static String ELIMINAR_VIDEOJUEGO="DELETE FROM videojuego WHERE videojuego_id = ?";
     
     public List<Videojuego> obtenerLosMejoresVideojuegosSegunComunidad() throws SQLException {
@@ -62,7 +63,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
             insert.setString(2, t.getNombre());
             insert.setFloat(3, t.getPrecio());
             insert.setString(4, t.getRecurso_minimo());
-            insert.setInt(5, t.getEdad_minima());
+            insert.setString(5, t.getClasificacion().toString());
             insert.setBoolean(6, t.isEstado());
             insert.setDate(7, Date.valueOf(t.getFecha()));
             insert.setBytes(8, t.getImagen());
@@ -79,7 +80,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
             insert.setString(1, t.getNombre());
             insert.setFloat(2, t.getPrecio());
             insert.setString(3, t.getRecurso_minimo());
-            insert.setInt(4, t.getEdad_minima());
+            insert.setString(4, t.getClasificacion().toString());
             insert.setBoolean(5, t.isEstado());
             insert.setBytes(6, t.getImagen());
             insert.setString(7, t.getDescripcion());
@@ -186,7 +187,7 @@ public class VideojuegoDB implements CRUD<Videojuego> {
                 resultSet.getString("nombre"),
                 resultSet.getFloat("precio"),
                 resultSet.getString("recurso_minimo"),
-                resultSet.getInt("edad_minima"),
+                EnumClasificacion.valueOf(resultSet.getString("clasificacion")),
                 resultSet.getBoolean("estado"),
                 resultSet.getDate("fecha").toLocalDate(),
                 resultSet.getBytes("imagen"),

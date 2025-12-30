@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego.BibliotecaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class BibliotecaVideojuegoResponse {
     private byte[] imagen;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
+    private List<Multimedia> multimedias;
     
     public BibliotecaVideojuegoResponse(BibliotecaVideojuego bibliotecaVideojuego) {
         this.biblioteca_id = bibliotecaVideojuego.getBiblioteca_id();
@@ -41,9 +43,10 @@ public class BibliotecaVideojuegoResponse {
         this.nombreVideojuego = bibliotecaVideojuego.getNombreVideojuego();
         this.nombreEmpresa = bibliotecaVideojuego.getNombreEmpresa();
         this.descripcion = bibliotecaVideojuego.getDescripcion();
-        this.imagen = bibliotecaVideojuego.getImagen();;
+        this.imagen = bibliotecaVideojuego.getImagen();
         this.puntaje = bibliotecaVideojuego.getPuntaje();
         this.categorias = bibliotecaVideojuego.getCategorias();
+        this.multimedias = bibliotecaVideojuego.getMultimedias();
     }
 
     public int getBiblioteca_id() {
@@ -132,6 +135,14 @@ public class BibliotecaVideojuegoResponse {
 
     public void setCategorias(List<CategoriaVideojuego> categorias) {
         this.categorias = categorias;
+    }
+
+    public List<Multimedia> getMultimedias() {
+        return multimedias;
+    }
+
+    public void setMultimedias(List<Multimedia> multimedias) {
+        this.multimedias = multimedias;
     }
     
 }

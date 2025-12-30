@@ -4,8 +4,8 @@
  */
 package ipc2_vaqueras.vaquerasdipc2.models.videojuego;
 
-import ipc2_vaqueras.vaquerasdipc2.models.categoria.Categoria;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
+import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import java.time.LocalDate;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +20,7 @@ public class Videojuego {
     private String nombre;
     private float precio;
     private String recurso_minimo;
-    private int edad_minima;
+    private EnumClasificacion clasificacion;
     private boolean estado;
     private LocalDate fecha;
     private byte[] imagen;
@@ -30,13 +30,14 @@ public class Videojuego {
     private int total;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
+    private List<Multimedia> multimedias;
 
-    public Videojuego(int empresa_id, String nombre, float precio, String recurso_minimo, int edad_minima, boolean estado, LocalDate fecha, byte[] imagen, String descripcion) {
+    public Videojuego(int empresa_id, String nombre, float precio, String recurso_minimo, EnumClasificacion clasificacion, boolean estado, LocalDate fecha, byte[] imagen, String descripcion) {
         this.empresa_id = empresa_id;
         this.nombre = nombre;
         this.precio = precio;
         this.recurso_minimo = recurso_minimo;
-        this.edad_minima = edad_minima;
+        this.clasificacion = clasificacion;
         this.estado = estado;
         this.fecha = fecha;
         this.imagen = imagen;
@@ -83,12 +84,12 @@ public class Videojuego {
         this.recurso_minimo = recurso_minimo;
     }
 
-    public int getEdad_minima() {
-        return edad_minima;
+    public EnumClasificacion getClasificacion() {
+        return clasificacion;
     }
 
-    public void setEdad_minima(int edad_minima) {
-        this.edad_minima = edad_minima;
+    public void setClasificacion(EnumClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
     }
 
     public boolean isEstado() {
@@ -162,13 +163,21 @@ public class Videojuego {
     public void setCategorias(List<CategoriaVideojuego> categorias) {
         this.categorias = categorias;
     }
+
+    public List<Multimedia> getMultimedias() {
+        return multimedias;
+    }
+
+    public void setMultimedias(List<Multimedia> multimedias) {
+        this.multimedias = multimedias;
+    }
     
     public boolean isValid () {
         return StringUtils.isNotBlank(nombre)
                 && StringUtils.isNotBlank(recurso_minimo)
                 && empresa_id > 0
                 && precio >= 0
-                && edad_minima > 0
+                && clasificacion != null
                 && fecha != null;
     }
     

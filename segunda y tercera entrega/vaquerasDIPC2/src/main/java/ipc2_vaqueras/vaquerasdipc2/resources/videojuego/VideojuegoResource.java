@@ -13,6 +13,7 @@ import ipc2_vaqueras.vaquerasdipc2.dtos.videojuego.VideojuegoResponse;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.EntityAlreadyExistsException;
 import ipc2_vaqueras.vaquerasdipc2.exceptions.UserDataInvalidException;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import ipc2_vaqueras.vaquerasdipc2.services.videojuego.VideojuegoService;
 import jakarta.ws.rs.core.Context;
@@ -53,7 +54,7 @@ public class VideojuegoResource {
             @FormDataParam("nombre") String nombre,
             @FormDataParam("precio") float precio,
             @FormDataParam("recurso_minimo") String recurso_minimo,
-            @FormDataParam("edad_minima") int edad_minima,
+            @FormDataParam("clasificacion") EnumClasificacion clasificacion,
             @FormDataParam("estado") boolean estado,
             @FormDataParam("fecha") String fecha,
             @FormDataParam("imagen") InputStream imagenInput,
@@ -66,7 +67,7 @@ public class VideojuegoResource {
             if (imagenInput != null && fileDetail != null) {
                 imagen = imagenInput.readAllBytes();
             }
-            Videojuego videojuego = new Videojuego(empresa_id, nombre, precio, recurso_minimo, edad_minima, estado, LocalDate.parse(fecha), imagen, descripcion);
+            Videojuego videojuego = new Videojuego(empresa_id, nombre, precio, recurso_minimo, clasificacion, estado, LocalDate.parse(fecha), imagen, descripcion);
             videojuegoService.crearVideojuego(videojuego);
             return Response.ok().build();
         } catch (UserDataInvalidException | IOException e) {
@@ -87,6 +88,9 @@ public class VideojuegoResource {
                     .map(VideojuegoResponse::new)
                     .toList();
             return Response.ok(videojuegos).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
@@ -102,6 +106,9 @@ public class VideojuegoResource {
                     .map(VideojuegoResponse::new)
                     .toList();
             return Response.ok(videojuegos).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
@@ -118,6 +125,9 @@ public class VideojuegoResource {
                     .map(VideojuegoResponse::new)
                     .toList();
             return Response.ok(videojuegos).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
@@ -151,6 +161,9 @@ public class VideojuegoResource {
                     .map(VideojuegoResponse::new)
                     .toList();
             return Response.ok(videojuegos).build();
+        } catch (UserDataInvalidException e) {
+            return errorEjecucion(e.getMessage(), 1);
+
         } catch (SQLException e) {
             return errorEjecucion(e.getMessage(), 3);
         }
@@ -163,7 +176,7 @@ public class VideojuegoResource {
             @FormDataParam("nombre") String nombre,
             @FormDataParam("precio") float precio,
             @FormDataParam("recurso_minimo") String recurso_minimo,
-            @FormDataParam("edad_minima") int edad_minima,
+            @FormDataParam("clasificacion") EnumClasificacion clasificacion,
             @FormDataParam("estado") boolean estado,
             @FormDataParam("imagen") InputStream imagenInput,
             @FormDataParam("imagen") FormDataContentDisposition fileDetail,
@@ -175,7 +188,7 @@ public class VideojuegoResource {
             if (imagenInput != null && fileDetail != null) {
                 imagen = imagenInput.readAllBytes();
             }
-            Videojuego videojuego = new Videojuego(0, nombre, precio, recurso_minimo, edad_minima, estado, null, imagen, descripcion);
+            Videojuego videojuego = new Videojuego(0, nombre, precio, recurso_minimo, clasificacion, estado, null, imagen, descripcion);
             videojuego.setVideojuego_id(code);
             videojuegoService.actualizarVideojuego(videojuego);
             return Response.ok().build();
