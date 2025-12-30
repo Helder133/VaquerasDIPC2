@@ -11,6 +11,7 @@ create table if not exists empresa (
 	nombre varchar(200) not null,
 	descripcion varchar(250),
 	comision_negociada float,
+	estado bool default 1,
 	estado_comentario bool default 1
 );
 
