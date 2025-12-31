@@ -1,0 +1,120 @@
+<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 py-5"
+    style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d44 100%);" data-bs-theme="dark">
+
+    <div class="card shadow-lg p-4 border-0" style="max-width: 600px; width: 100%; background-color: #212529;">
+        <div class="card-body">
+
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-info">
+                    @if (isEditMode()) { Editar Usuario } @else { Registro de Usuario }
+                </h3>
+                <p class="text-secondary">
+                    Creando rol: <span class="badge bg-warning text-dark">{{ rolACrear }}</span>
+                </p>
+            </div>
+
+            @if (errorMessage()) {
+            <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>{{ errorMessage() }}</div>
+            }
+            @if (successMessage()) {
+            <div class="alert alert-success"><i class="bi bi-check-circle me-2"></i>{{ successMessage() }}</div>
+            }
+
+            <form [formGroup]="userForm" (ngSubmit)="submit()">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" formControlName="nombre"
+                            [ngClass]="{'is-invalid': userForm.get('nombre')?.invalid && userForm.get('nombre')?.touched}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" formControlName="fecha_nacimiento"
+                            [ngClass]="{'is-invalid': userForm.get('fecha_nacimiento')?.invalid && userForm.get('fecha_nacimiento')?.touched}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input type="email" class="form-control" formControlName="email"
+                        [ngClass]="{'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" formControlName="password"
+                        [ngClass]="{'is-invalid': userForm.get('password')?.invalid && userForm.get('password')?.touched}">
+                </div>
+
+                @if (mostrarCamposComunes) {
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" formControlName="telefono">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">País</label>
+                        <input type="text" class="form-control" formControlName="pais">
+                    </div>
+                </div>
+
+                <div class="mb-4 text-center">
+                    <label class="form-label d-block text-secondary">Foto de Perfil</label>
+
+                    <div class="position-relative d-inline-block mb-3">
+
+                        @if (avatarPreview()) {
+                        <img [src]="avatarPreview()" class="rounded-circle shadow border border-3 border-info"
+                            alt="Previsualización" style="width: 120px; height: 120px; object-fit: cover;">
+
+                        <button type="button"
+                            class="btn btn-danger btn-sm position-absolute top-0 start-100 translate-middle rounded-circle"
+                            (click)="avatarPreview.set(null); selectedFile = null" title="Quitar foto">
+                            <i class="bi bi-x"></i>
+                        </button>
+                        }
+
+                        @else {
+                        <div class="rounded-circle bg-dark border border-secondary d-flex justify-content-center align-items-center mx-auto"
+                            style="width: 120px; height: 120px;">
+                            <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                        </div>
+                        }
+                    </div>
+
+                    <div class="input-group">
+                        <input type="file" class="form-control" id="avatarInput" (change)="onFileSelected($event)"
+                            accept="image/*">
+                    </div>
+                    <div class="form-text text-secondary">Formatos: JPG, PNG. Máx 5MB.</div>
+                </div>
+                }
+
+                @if (mostrarInputEmpresa) {
+                <div class="mb-3">
+                    <label class="form-label text-warning">Nombre de la Nueva Empresa</label>
+                    <input type="text" class="form-control border-warning" formControlName="nombreEmpresa"
+                        placeholder="Ej: Nintendo, Sony...">
+                    <div class="form-text text-light">Se asignará este usuario como Manager de la empresa.</div>
+                </div>
+                }
+
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-info fw-bold text-dark"
+                        [disabled]="userForm.invalid || isLoading()">
+                        @if (isLoading()) {
+                        <span class="spinner-border spinner-border-sm me-2"></span> Guardando...
+                        } @else {
+                        @if (isEditMode()) { Actualizar } @else { Registrar }
+                        }
+                    </button>
+
+                    <a routerLink="/login" class="btn btn-outline-light">Volver al Login</a>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100"
+    style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d44 100%);" data-bs-theme="dark">
+
+    <div class="card shadow-lg p-4 border-0" style="max-width: 400px; width: 100%; background-color: #212529;">
+        <div class="card-body">
+
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-info">Copia de steams xD</h2>
+                <p class="text-secondary">Bienvenido de nuevo</p>
+            </div>
+
+            @if (isError) {
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                <div>{{ mensajeError }}</div>
+            </div>
+            }
+
+            <form [formGroup]="loginFormGroup" (ngSubmit)="submit()">
+
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold text-light">Correo Electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" formControlName="email"
+                            placeholder="nombre@ejemplo.com" [ngClass]="{
+                                'is-invalid': loginFormGroup.get('email')?.invalid && loginFormGroup.get('email')?.touched
+                            }">
+                    </div>
+                    @if (loginFormGroup.get('email')?.invalid && loginFormGroup.get('email')?.touched) {
+                    <div class="text-danger small mt-1">
+                        @if (loginFormGroup.get('email')?.hasError('required')) {
+                        <span>El correo es obligatorio.</span>
+                        }
+                        @if (loginFormGroup.get('email')?.hasError('email')) {
+                        <span>Ingresa un correo válido.</span>
+                        }
+                    </div>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label for="contraseña" class="form-label fw-semibold text-light">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="contraseña" formControlName="contraseña"
+                            placeholder="••••••••"
+                            [ngClass]="{'is-invalid': loginFormGroup.get('contraseña')?.invalid && loginFormGroup.get('contraseña')?.touched}">
+                    </div>
+
+                    @if (loginFormGroup.get('contraseña')?.hasError('required') &&
+                    loginFormGroup.get('contraseña')?.touched) {
+                    <div class="text-danger small mt-1">
+                        La contraseña es obligatoria.
+                    </div>
+                    }
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-info fw-bold text-dark"
+                        [disabled]="loginFormGroup.invalid || isLoading">
+
+                        @if (isLoading) {
+                        <span>
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Cargando...
+                        </span>
+                        } @else {
+                        <span>Iniciar Sesión</span>
+                        }
+
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="text-center mt-4">
+                <span class="text-secondary">¿No tienes cuenta?</span>
+                <a routerLink="/register" class="text-decoration-none fw-bold ms-1 text-info">Regístrate</a>
+            </div>
+
+        </div>
+    </div>
+</div>
