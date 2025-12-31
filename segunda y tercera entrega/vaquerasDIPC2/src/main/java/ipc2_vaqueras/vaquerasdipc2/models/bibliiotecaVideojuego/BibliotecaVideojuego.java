@@ -6,6 +6,7 @@ package ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego;
 
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class BibliotecaVideojuego {
     private String nombreVideojuego;
     private String nombreEmpresa;
     private String descripcion;
+    private EnumClasificacion clasificacion;
     private byte[] imagen;
     private double rating_promedio;
     private int total;
@@ -147,6 +149,14 @@ public class BibliotecaVideojuego {
 
     public void setMultimedias(List<Multimedia> multimedias) {
         this.multimedias = multimedias;
+    }
+
+    public EnumClasificacion getClasificacion() {
+        return clasificacion;
+    }
+
+    public void setClasificacion(EnumClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
     }
     
     public boolean isValid() {

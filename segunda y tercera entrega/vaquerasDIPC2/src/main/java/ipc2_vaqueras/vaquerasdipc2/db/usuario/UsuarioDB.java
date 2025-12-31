@@ -37,8 +37,8 @@ public class UsuarioDB implements CRUD<Usuario> {
     private static final String ELIMINAR_USUARIO = "DELETE FROM usuario WHERE usuario_id = ?";
 
     //querys auxiliares
-    private static final String LOGIN = "SELECT * FROM usuario WHERE email = ? AND contraseña = ?";
-    private static final String VALIDAR_EMAIL = "SELECT * FROM usuario WHERE email = ?";
+    private static final String LOGIN = "select u.usuario_id, u.nombre, u.email, u.contraseña, u.fecha_nacimiento, u.rol, u.telefono, u.avatar, u.pais, u.empresa_id, e.nombre AS empresa_nombre from usuario u left join empresa e on u.empresa_id = e.empresa_id WHERE email = ? AND contraseña = ?";
+    private static final String VALIDAR_EMAIL = "select u.usuario_id, u.nombre, u.email, u.contraseña, u.fecha_nacimiento, u.rol, u.telefono, u.avatar, u.pais, u.empresa_id, e.nombre AS empresa_nombre from usuario u left join empresa e on u.empresa_id = e.empresa_id WHERE email = ?";
     private static final String VALIDAR_TELEFONO = "SELECT * FROM usuario WHERE telefono = ?";
     private static final String VALIDAR_NUEVO_TELEFONO = "SELECT * FROM usuario WHERE telefono = ? AND usuario_id <> ?";
 

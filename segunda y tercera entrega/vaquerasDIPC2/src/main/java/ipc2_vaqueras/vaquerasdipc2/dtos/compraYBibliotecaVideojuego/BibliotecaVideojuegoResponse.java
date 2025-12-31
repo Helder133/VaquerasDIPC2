@@ -10,6 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import ipc2_vaqueras.vaquerasdipc2.models.bibliiotecaVideojuego.BibliotecaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
 import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
+import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class BibliotecaVideojuegoResponse {
     private String nombreVideojuego;
     private String nombreEmpresa;
     private String descripcion;
+    private EnumClasificacion clasificacion;
     private byte[] imagen;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
@@ -47,6 +49,7 @@ public class BibliotecaVideojuegoResponse {
         this.puntaje = bibliotecaVideojuego.getPuntaje();
         this.categorias = bibliotecaVideojuego.getCategorias();
         this.multimedias = bibliotecaVideojuego.getMultimedias();
+        this.clasificacion = bibliotecaVideojuego.getClasificacion();
     }
 
     public int getBiblioteca_id() {
@@ -143,6 +146,14 @@ public class BibliotecaVideojuegoResponse {
 
     public void setMultimedias(List<Multimedia> multimedias) {
         this.multimedias = multimedias;
+    }
+
+    public EnumClasificacion getClasificacion() {
+        return clasificacion;
+    }
+
+    public void setClasificacion(EnumClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
     }
     
 }
