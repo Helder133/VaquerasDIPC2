@@ -2,15 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ipc2_vaqueras.vaquerasdipc2.dtos.videojuego;
+package ipc2_vaqueras.vaquerasdipc2.dtos.banner;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import ipc2_vaqueras.vaquerasdipc2.models.banner.Banner;
 import ipc2_vaqueras.vaquerasdipc2.models.categoria.videojuego.CategoriaVideojuego;
-import ipc2_vaqueras.vaquerasdipc2.models.multimedia.Multimedia;
 import ipc2_vaqueras.vaquerasdipc2.models.videojuego.EnumClasificacion;
-import ipc2_vaqueras.vaquerasdipc2.models.videojuego.Videojuego;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,40 +17,48 @@ import java.util.List;
  *
  * @author helder
  */
-public class VideojuegoResponse {
+public class BannerResponse {
 
+    private int banner_id;
     private int videojuego_id;
-    private int empresa_id;
-    private String nombre;
-    private float precio;
-    private String recurso_minimo;
-    private EnumClasificacion clasificacion;
     private boolean estado;
+    private int empresa_id;
+    private String nombreVideojuego;
+    private float precio;
+    private String recursoMinimo;
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate fecha;
     private byte[] imagen;
     private String descripcion;
-    private String nombre_empresa;
+    private EnumClasificacion clasificacion;
+    private String nombreEmpresa;
     private double puntaje;
     private List<CategoriaVideojuego> categorias;
-    private List<Multimedia> multimedias;
+    
+    public BannerResponse(Banner banner) {
+        this.banner_id = banner.getBanner_id();
+        this.videojuego_id = banner.getVideojuego_id();
+        this.estado = banner.isEstado();
+        this.empresa_id = banner.getEmpresa_id();
+        this.nombreVideojuego = banner.getNombreVideojuego();
+        this.precio = banner.getPrecio();
+        this.recursoMinimo = banner.getRecursoMinimo();
+        this.fecha = banner.getFecha();
+        this.imagen = banner.getImagen();
+        this.descripcion = banner.getDescripcion();
+        this.clasificacion = banner.getClasificacion();
+        this.nombreEmpresa = banner.getNombreEmpresa();
+        this.puntaje = banner.getPuntaje();
+        this.categorias = banner.getCategorias();
+    }
 
-    public VideojuegoResponse(Videojuego videojuego) {
-        this.videojuego_id = videojuego.getVideojuego_id();
-        this.empresa_id = videojuego.getEmpresa_id();
-        this.nombre = videojuego.getNombre();
-        this.precio = videojuego.getPrecio();
-        this.recurso_minimo = videojuego.getRecurso_minimo();
-        this.clasificacion = videojuego.getClasificacion();
-        this.estado = videojuego.isEstado();
-        this.fecha = videojuego.getFecha();
-        this.imagen = videojuego.getImagen();
-        this.descripcion = videojuego.getDescripcion();
-        this.nombre_empresa = videojuego.getNombre_empresa();
-        this.puntaje = videojuego.getPuntaje();
-        this.categorias = videojuego.getCategorias();
-        this.multimedias = videojuego.getMultimedias();
+    public int getBanner_id() {
+        return banner_id;
+    }
+
+    public void setBanner_id(int banner_id) {
+        this.banner_id = banner_id;
     }
 
     public int getVideojuego_id() {
@@ -62,6 +69,14 @@ public class VideojuegoResponse {
         this.videojuego_id = videojuego_id;
     }
 
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
     public int getEmpresa_id() {
         return empresa_id;
     }
@@ -70,12 +85,12 @@ public class VideojuegoResponse {
         this.empresa_id = empresa_id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreVideojuego() {
+        return nombreVideojuego;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreVideojuego(String nombreVideojuego) {
+        this.nombreVideojuego = nombreVideojuego;
     }
 
     public float getPrecio() {
@@ -86,28 +101,12 @@ public class VideojuegoResponse {
         this.precio = precio;
     }
 
-    public String getRecurso_minimo() {
-        return recurso_minimo;
+    public String getRecursoMinimo() {
+        return recursoMinimo;
     }
 
-    public void setRecurso_minimo(String recurso_minimo) {
-        this.recurso_minimo = recurso_minimo;
-    }
-
-    public EnumClasificacion getClasificacion() {
-        return clasificacion;
-    }
-
-    public void setClasificacion(EnumClasificacion clasificacion) {
-        this.clasificacion = clasificacion;
-    }
-
-    public boolean isEstado() {
-        return estado;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
+    public void setRecursoMinimo(String recursoMinimo) {
+        this.recursoMinimo = recursoMinimo;
     }
 
     public LocalDate getFecha() {
@@ -134,12 +133,20 @@ public class VideojuegoResponse {
         this.descripcion = descripcion;
     }
 
-    public String getNombre_empresa() {
-        return nombre_empresa;
+    public EnumClasificacion getClasificacion() {
+        return clasificacion;
     }
 
-    public void setNombre_empresa(String nombre_empresa) {
-        this.nombre_empresa = nombre_empresa;
+    public void setClasificacion(EnumClasificacion clasificacion) {
+        this.clasificacion = clasificacion;
+    }
+
+    public String getNombreEmpresa() {
+        return nombreEmpresa;
+    }
+
+    public void setNombreEmpresa(String nombreEmpresa) {
+        this.nombreEmpresa = nombreEmpresa;
     }
 
     public double getPuntaje() {
@@ -157,13 +164,5 @@ public class VideojuegoResponse {
     public void setCategorias(List<CategoriaVideojuego> categorias) {
         this.categorias = categorias;
     }
-
-    public List<Multimedia> getMultimedias() {
-        return multimedias;
-    }
-
-    public void setMultimedias(List<Multimedia> multimedias) {
-        this.multimedias = multimedias;
-    }
-
+    
 }
