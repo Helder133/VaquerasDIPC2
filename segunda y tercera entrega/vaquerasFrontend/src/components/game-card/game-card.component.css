@@ -1,0 +1,9 @@
+.hover-effect {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+}
+
+.hover-effect:hover {
+    transform: translateY(-5px); /* Sube 5 pixeles */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; /* Aumenta la sombra */
+    border-color: #0dcaf0 !important; /* El borde se pone cian */
+}

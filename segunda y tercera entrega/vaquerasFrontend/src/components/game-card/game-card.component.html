@@ -1,0 +1,38 @@
+<div class="card h-100 bg-dark border-secondary shadow-sm text-light hover-effect">
+
+    <div class="ratio ratio-16x9 position-relative" style="cursor: pointer;"
+        [routerLink]="['/juegos/detalle', juego.videojuego_id]">
+
+        <img [src]="getImagenSrc()" class="card-img-top object-fit-cover w-100 h-100" [alt]="juego.nombre">
+
+        <span class="position-absolute top-0 end-0 badge bg-black bg-opacity-75 m-2">
+            {{ juego.clasificacion }}
+        </span>
+    </div>
+
+    <div class="card-body d-flex flex-column">
+
+        <h5 class="card-title text-truncate fw-bold text-info mb-1" [title]="juego.nombre">
+            {{ juego.nombre }}
+        </h5>
+
+        <small class="text-secondary mb-3">
+            <i class="bi bi-building"></i> {{ juego.nombre_empresa }}
+        </small>
+
+        <div class="mt-auto d-flex justify-content-between align-items-end border-top border-secondary pt-3">
+
+            <div>
+                <span class="d-block text-secondary small" style="font-size: 0.75rem;">Precio</span>
+                <span class="fs-5 fw-bold text-success">Q {{ juego.precio }}</span>
+            </div>
+
+            <div class="text-end">
+                <span class="badge bg-warning text-dark fs-6">
+                    <i class="bi bi-star-fill"></i> {{ formatPuntaje(juego.puntaje) }}
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>

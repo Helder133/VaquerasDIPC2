@@ -109,11 +109,10 @@
                         @if (isEditMode()) { Actualizar } @else { Registrar }
                         }
                     </button>
-
+                    @if(!isLoading()) {
                     <a routerLink="/login" class="btn btn-outline-light">Volver al Login</a>
-
+                    } @else {}
                 </div>
-
             </form>
         </div>
     </div>
